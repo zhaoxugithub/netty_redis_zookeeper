@@ -4,6 +4,7 @@ package com.crazymakercircle.ReactorModel;
 import com.crazymakercircle.util.Logger;
 
 import java.io.IOException;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -23,9 +24,10 @@ class MultiThreadEchoHandler implements Runnable {
     MultiThreadEchoHandler(Selector selector, SocketChannel c) throws IOException {
         channel = c;
         channel.configureBlocking(false);
+        channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
 
         //唤醒选择,防止register时 boss线程被阻塞，netty 处理方式比较优雅，会在同一个线程注册事件，避免阻塞boss
-        selector.wakeup();
+//        selector.wakeup();
 
         //仅仅取得选择键，后设置感兴趣的IO事件
         sk = channel.register(selector, 0);

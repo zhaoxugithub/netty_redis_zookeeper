@@ -8,7 +8,7 @@ import org.apache.zookeeper.CreateMode;
  * create by 尼恩 @ 疯狂创客圈
  **/
 public class IDMaker {
-    private static final String ZK_ADDRESS = "127.0.0.1:2181";
+    private static final String ZK_ADDRESS = "cdh1:2181";
     //Zk客户端
     CuratorFramework client = null;
 
@@ -36,7 +36,7 @@ public class IDMaker {
             String destPath = client.create()
                     .creatingParentsIfNeeded()
                     .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-//避免zookeeper的顺序节点暴增，需要删除创建的持久化顺序节点
+//避免zookeep建er的顺序节点暴增，需要删除创的持久化顺序节点
 //                    .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
                     .forPath(pathPefix);
             return destPath;

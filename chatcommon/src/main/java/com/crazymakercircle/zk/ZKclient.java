@@ -19,7 +19,7 @@ public class ZKclient {
 
     //Zk集群地址
 //    private static final String ZK_ADDRESS = "192.168.233.128:2181";
-    private static final String ZK_ADDRESS = "127.0.0.1:2181";
+    private static final String ZK_ADDRESS = "cdh1:2181";
 
     public static ZKclient instance = null;
 

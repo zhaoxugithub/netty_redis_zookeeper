@@ -61,12 +61,12 @@ public class SnowflakeIdGenerator {
     /**
      * worker 节点编号的移位
      */
-    private final static long APP_HOST_ID_SHIFT = SEQUENCE_BITS;
+    private final static long WORKER_ID_SHIFT = SEQUENCE_BITS;
 
     /**
      * 时间戳的移位
      */
-    private final static long TIMESTAMP_LEFT_SHIFT = WORKER_ID_BITS + APP_HOST_ID_SHIFT;
+    private final static long TIMESTAMP_LEFT_SHIFT = WORKER_ID_BITS + SEQUENCE_BITS;
 
     /**
      * 该项目的worker 节点 id
@@ -125,7 +125,7 @@ public class SnowflakeIdGenerator {
         long time = (current - START_TIME) << TIMESTAMP_LEFT_SHIFT;
 
         //workerId 右移动10位
-        long workerId = this.workerId << APP_HOST_ID_SHIFT;
+        long workerId = this.workerId << WORKER_ID_SHIFT;
 
         return time | workerId | sequence;
     }
