@@ -24,6 +24,10 @@ public class NioDemoConfig extends ConfigProperties
 
     public static final String FILE_RESOURCE_SRC_PATH
             = singleton.getValue("file.resource.src.path");
+  public static final String MMAP_FILE_RESOURCE_SRC_PATH
+            = singleton.getValue("mmap.file.resource.path");
+  public static final String MEM_SHARE_RESOURCE_SRC_PATH
+            = singleton.getValue("mem.share.resource.path");
 
     public static final String FILE_RESOURCE_DEST_PATH
             = singleton.getValue("file.resource.dest.path");
