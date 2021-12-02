@@ -156,7 +156,7 @@ public class BigFileNioReceiveServer {
             client.recieveCount += transferLen;
         }
         Logger.cfo("零复制 over，client.fileLength ：" + client.fileLength);
-        client.outChannel.force(true);
+       // client.outChannel.force(true);
 
         finished(client);
     }
