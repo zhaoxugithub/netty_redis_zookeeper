@@ -150,7 +150,7 @@ public class BigFileNioReceiveServer {
 
         Logger.cfo("零复制的开始位置：" + client.recieveCount);
         while (client.recieveCount < client.fileLength) {
-            // 零拷贝核心操作
+            // 零拷贝核心操作， kafka 使用了这个 transferFrom
             long transferLen = client.outChannel.transferFrom(socketChannel, client.recieveCount, 1024 * 1024 * 128);
             Logger.cfo("transferLen ：" + transferLen);
             client.recieveCount += transferLen;
