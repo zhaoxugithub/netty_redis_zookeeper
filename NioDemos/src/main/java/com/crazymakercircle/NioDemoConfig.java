@@ -37,6 +37,9 @@ public class NioDemoConfig extends ConfigProperties
 
     public static final String SOCKET_SEND_FILE
             = singleton.getValue("socket.send.file");
+
+    public static final String SOCKET_SEND_BIG_FILE
+            = singleton.getValue("socket.send.big.file");
     public static final String SOCKET_RECEIVE_FILE
             = singleton.getValue("socket.receive.file");
     public static final String SOCKET_RECEIVE_PATH

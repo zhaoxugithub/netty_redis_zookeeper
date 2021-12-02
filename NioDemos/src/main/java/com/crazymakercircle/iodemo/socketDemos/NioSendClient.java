@@ -45,24 +45,28 @@ public class NioSendClient {
         try {
 
 
-            String sourcePath = NioDemoConfig.SOCKET_SEND_FILE;
-            String srcPath = IOUtil.getResourcePath(sourcePath);
-            Logger.debug("srcPath=" + srcPath);
-
-            String destFile = NioDemoConfig.SOCKET_RECEIVE_FILE;
-            Logger.debug("destFile=" + destFile);
-
+            //发送小文件
+            String srcPath = NioDemoConfig.SOCKET_SEND_FILE;
+            //发送一个大的
+//            String srcPath = NioDemoConfig.SOCKET_SEND_BIG_FILE;
             File file = new File(srcPath);
             if (!file.exists()) {
-                Logger.debug("文件不存在");
-                return;
+                srcPath = IOUtil.getResourcePath(srcPath);
+                Logger.debug("srcPath=" + srcPath);
+                if (!file.exists()) {
+                    Logger.debug("文件不存在");
+                    return;
+                }
+
             }
+
+
             FileChannel fileChannel = new FileInputStream(file).getChannel();
 
             SocketChannel socketChannel = SocketChannel.open();
             socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true);
-             socketChannel.socket().connect(
-                new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP
+            socketChannel.socket().connect(
+                    new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP
                             , NioDemoConfig.SOCKET_SERVER_PORT));
             socketChannel.configureBlocking(false);
 
@@ -73,7 +77,7 @@ public class NioSendClient {
             }
 
             //发送文件名称
-            ByteBuffer fileNameByteBuffer = charset.encode(destFile);
+            ByteBuffer fileNameByteBuffer = charset.encode(file.getName());
 
             ByteBuffer buffer = ByteBuffer.allocate(NioDemoConfig.SEND_BUFFER_SIZE);
             //发送文件名称长度
@@ -93,7 +97,7 @@ public class NioSendClient {
 
             // 发送文件名称
             socketChannel.write(fileNameByteBuffer);
-            Logger.info("Client 文件名称发送完成:", destFile);
+            Logger.info("Client 文件名称发送完成:", file.getName());
             //发送文件长度
             buffer.putInt((int) file.length());
             //切换到读模式
