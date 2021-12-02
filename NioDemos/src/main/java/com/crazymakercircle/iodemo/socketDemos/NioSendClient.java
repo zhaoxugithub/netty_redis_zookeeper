@@ -3,11 +3,14 @@ package com.crazymakercircle.iodemo.socketDemos;
 import com.crazymakercircle.NioDemoConfig;
 import com.crazymakercircle.util.IOUtil;
 import com.crazymakercircle.util.Logger;
+import com.crazymakercircle.util.ThreadUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetSocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
@@ -57,10 +60,12 @@ public class NioSendClient {
             FileChannel fileChannel = new FileInputStream(file).getChannel();
 
             SocketChannel socketChannel = SocketChannel.open();
-            socketChannel.socket().connect(
-                    new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP
+            socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+             socketChannel.socket().connect(
+                new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP
                             , NioDemoConfig.SOCKET_SERVER_PORT));
             socketChannel.configureBlocking(false);
+
             Logger.debug("Client 成功连接服务端");
 
             while (!socketChannel.finishConnect()) {
@@ -73,20 +78,27 @@ public class NioSendClient {
             ByteBuffer buffer = ByteBuffer.allocate(NioDemoConfig.SEND_BUFFER_SIZE);
             //发送文件名称长度
 //            int fileNameLen =     fileNameByteBuffer.capacity();
-            //            //此处的bug，由小伙伴  @君莫问 发现， 缓冲区的数据长度为limit，而不是  capacity
-            //            int fileNameLen = fileNameByteBuffer.limit();
-            //            buffer.putInt(fileNameLen);
-            //            buffer.flip();
-            //            socketChannel.write(buffer);
-            //            buffer.clear();
-            //            Logger.info("Client 文件名称长度发送完成:", fileNameLen);
             //
-            //            //发送文件名称
+            // 此处的bug，由小伙伴  @君莫问 发现， 缓冲区的数据长度为limit，而不是  capacity
+            int fileNameLen = fileNameByteBuffer.remaining();
+            buffer.clear();
+            buffer.putInt(fileNameLen);
+            //切换到读模式
+            buffer.flip();
+            socketChannel.write(buffer);
+            Logger.info("Client 文件名称长度发送完成:", fileNameLen);
+
+            //清空
+            buffer.clear();
+
+            // 发送文件名称
             socketChannel.write(fileNameByteBuffer);
             Logger.info("Client 文件名称发送完成:", destFile);
             //发送文件长度
-            buffer.putLong(file.length());
+            buffer.putInt((int) file.length());
+            //切换到读模式
             buffer.flip();
+            //写入文件长度
             socketChannel.write(buffer);
             buffer.clear();
             Logger.info("Client 文件长度发送完成:", file.length());
@@ -103,6 +115,9 @@ public class NioSendClient {
                 progress += length;
                 Logger.debug("| " + (100 * progress / file.length()) + "% |");
             }
+
+            //等待一分钟关闭连接
+            ThreadUtil.sleepSeconds(60);
 
             if (length == -1) {
                 IOUtil.closeQuietly(fileChannel);
@@ -126,6 +141,7 @@ public class NioSendClient {
 
         NioSendClient client = new NioSendClient(); // 启动客户端连接
         client.sendFile(); // 传输文件
+
 
     }
 

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SelectableChannel;
@@ -37,10 +38,13 @@ public class NioReceiveServer {
      * 服务器端保存的客户端对象，对应一个客户端文件
      */
     static class Client {
+        int step = 1; //1 读取文件名称的长度，2 读取文件名称  ，3 ，读取文件内容的长度， 4 读取文件内容
         //文件名称
-        String fileName;
+        String fileName = null;
+
         //长度
         long fileLength;
+        int fileNameLength;
 
         //开始传输的时间
         long startTime;
@@ -101,6 +105,8 @@ public class NioReceiveServer {
                     if (socketChannel == null) continue;
                     // 11、客户端新连接，切换为非阻塞模式
                     socketChannel.configureBlocking(false);
+                    socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+
                     // 12、将客户端新连接通道注册到selector选择器上
                     SelectionKey selectionKey =
                             socketChannel.register(selector, SelectionKey.OP_READ);
@@ -125,99 +131,131 @@ public class NioReceiveServer {
      * 处理客户端传输过来的数据
      */
     private void processData(SelectionKey key) throws IOException {
-        Client client = clientMap.get(key.channel());
 
         SocketChannel socketChannel = (SocketChannel) key.channel();
         int num = 0;
-        try {
+        Client client = clientMap.get(key.channel());
+
+        buffer.clear();
+        while ((num = socketChannel.read(buffer)) > 0) {
+
+           Logger.cfo("收到的字节数 = " + num);
+
+            //切换到读模式
+            buffer.flip();
+
+            readBuffer(client, buffer);
             buffer.clear();
-            while ((num = socketChannel.read(buffer)) > 0) {
-                buffer.flip();
-                //客户端发送过来的，首先处理文件名
-                if (null == client.fileName) {
+//                key.cancel();
 
-                    //0 <= position <= limit <= capacity
-                    //这里之前用的是buffer.capacity()
-                    // capacity 是初始化话的内部数组元素数量 ，如Byte 数量
-                    // 实际上这里应该是  buffer.limit()
-                    //错误代码，如下
-//                    if (buffer.capacity() < 4) {
-//                        continue;
-//                    }
-                 //修改后的代码,这个bug，是社群小伙伴  nicole 发现的，小伙伴潜力无限呀
-                    if (buffer.limit() < 4) {
-                        continue;
-                    }
-                    int fileNameLen = buffer.getInt();
-                    byte[] fileNameBytes = new byte[fileNameLen];
-                    buffer.get(fileNameBytes);
+        }
 
-                    // 文件名
-                    String fileName = new String(fileNameBytes, charset);
 
-                    File directory = new File(RECEIVE_PATH);
-                    if (!directory.exists()) {
-                        directory.mkdir();
-                    }
-                    Logger.info("NIO  传输目标dir：", directory);
+    }
 
-                    client.fileName = fileName;
-                    String fullName = directory.getAbsolutePath() + File.separatorChar + fileName;
-                    Logger.info("NIO  传输目标文件：", fullName);
+    private void readBuffer(Client client, ByteBuffer buffer) {
+        while (len(buffer) > 0) {   //客户端发送过来的，首先处理文件名长度
+            if (1 == client.step) {
+                int fileNameLengthByteLen = len(buffer);
+                System.out.println("读取文件名称长度之前，可读取的字节数 = " + fileNameLengthByteLen);
+                System.out.println("读取文件名称长度之前，buffer.remaining() = " + buffer.remaining());
+                System.out.println("读取文件名称长度之前，buffer.capacity() = " + buffer.capacity());
+                System.out.println("读取文件名称长度之前，buffer.limit() = " + buffer.limit());
+                System.out.println("读取文件名称长度之前，buffer.position() = " + buffer.position());
 
-                    File file = new File(fullName.trim());
 
+                //获取文件名称长度
+                client.fileNameLength = buffer.getInt();
+
+                System.out.println("读取文件名称长度之后，buffer.remaining() = " + buffer.remaining());
+                System.out.println("读取文件名称长度 = " + client.fileNameLength);
+
+                client.step = 2;
+
+            } else if (2 == client.step) {
+                Logger.cfo("step 2");
+
+                if (len(buffer) < client.fileNameLength) {
+                    Logger.cfo("出现半包问题，需要更加复制的拆包方案");
+                    throw new RuntimeException("出现半包问题，需要更加复制的拆包方案");
+                }
+                byte[] fileNameBytes = new byte[client.fileNameLength];
+
+
+                buffer.get(fileNameBytes);
+
+
+                // 文件名
+                String fileName = new String(fileNameBytes, charset);
+                System.out.println("读取文件名称 = " + fileName);
+
+                File directory = new File(RECEIVE_PATH);
+                if (!directory.exists()) {
+                    directory.mkdir();
+                }
+                Logger.info("NIO  传输目标dir：", directory);
+
+                client.fileName = fileName;
+                String fullName = directory.getAbsolutePath() + File.separatorChar + fileName;
+                Logger.info("NIO  传输目标文件：", fullName);
+
+                File file = new File(fullName.trim());
+
+                try {
                     if (!file.exists()) {
                         file.createNewFile();
+
                     }
                     FileChannel fileChannel = new FileOutputStream(file).getChannel();
                     client.outChannel = fileChannel;
-
-                    if (buffer.limit() < 8) {
-                        continue;
-                    }
-                    // 文件长度
-                    long fileLength = buffer.getLong();
-                    client.fileLength = fileLength;
-                    client.startTime = System.currentTimeMillis();
-                    Logger.debug("NIO  传输开始：");
-
-                    client.receiveLength += buffer.capacity();
-                    if (buffer.limit() > 0) {
-                        // 写入文件
-                        client.outChannel.write(buffer);
-                    }
-                    if (client.isFinished()) {
-                        finished(key, client);
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
+                client.step = 3;
+
+            } else if (3 == client.step) {
+                Logger.cfo("step 3");
+
+                //客户端发送过来的，首先处理文件内容长度
+
+                if (len(buffer) < 4) {
+                    Logger.cfo("出现半包问题，需要更加复制的拆包方案");
+                    throw new RuntimeException("出现半包问题，需要更加复制的拆包方案");
+                }
+                //获取文件内容长度
+                client.fileLength = buffer.getInt();
+
+                System.out.println("读取文件内容长度之后，buffer.remaining() = " + buffer.remaining());
+                System.out.println("读取文件内容长度 = " + client.fileLength);
+
+                client.step = 4;
+                client.startTime = System.currentTimeMillis();
+
+            } else if (4 == client.step) {
+
+                Logger.cfo("step 4");
                 //客户端发送过来的，最后是文件内容
-                else {
-                    client.receiveLength += buffer.capacity();
-                    // 写入文件
+
+                client.receiveLength += len(buffer);
+
+                // 写入文件
+                try {
                     client.outChannel.write(buffer);
-                    if (client.isFinished()) {
-                        finished(key, client);
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                buffer.clear();
+                if (client.isFinished()) {
+                    finished(client);
+                }
             }
-            key.cancel();
-        } catch (IOException e) {
-            key.cancel();
-            e.printStackTrace();
-            return;
-        }
-        // 调用close为-1 到达末尾
-        if (num == -1) {
-            finished(key, client);
         }
     }
 
-    private void finished(SelectionKey key, Client client) {
+
+    private void finished(Client client) {
         IOUtil.closeQuietly(client.outChannel);
         Logger.info("上传完毕");
-        key.cancel();
         Logger.debug("文件接收成功,File Name：" + client.fileName);
         Logger.debug(" Size：" + IOUtil.getFormatFileSize(client.fileLength));
         long endTime = System.currentTimeMillis();
@@ -234,4 +272,11 @@ public class NioReceiveServer {
         NioReceiveServer server = new NioReceiveServer();
         server.startServer();
     }
+
+    private static int len(ByteBuffer buffer) {
+
+        Logger.cfo(" >>>  buffer left：" + buffer.remaining());
+        return buffer.remaining();
+    }
+
 }
