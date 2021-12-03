@@ -153,6 +153,17 @@ public class NioReceiveServer {
 
     }
 
+    // 非常抱歉，《netty zookeeper redis 高并发核心编程》 是08年08月出版的，3年了，当时候懒，没有解决文件传输的半包问题
+    // 传输文件的时候，经常出问题
+    // 很多小伙伴问我，怎么解决，我的答案都是： 半包问题，netty已经解决， nio的半包问题，不管也罢
+    // 一直到今天，2021.12.3
+    // 为了讲清楚 rocketmq， kakfa的 零复制， 才不得不来解决这个  nio 的半包问题
+    // 但是，比较复杂的，需要对nio 有比较熟练的使用 和深入的理解
+    // 下面的方案，只能说解决了80%
+    // 并没有完全解决， 但是，已经基本传输文件没有问题了
+    // 具体的解决过程，和解决的技巧，咱们 视频见
+    // 总之， nio 比较复杂，但是非常重要， 大家一定要从骨子里掌握
+
     private void readBuffer(Client client, ByteBuffer buffer) {
         while (len(buffer) > 0) {   //客户端发送过来的，首先处理文件名长度
             if (1 == client.step) {
