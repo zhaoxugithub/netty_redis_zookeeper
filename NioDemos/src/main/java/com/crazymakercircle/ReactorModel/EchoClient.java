@@ -5,7 +5,6 @@ import com.crazymakercircle.util.Dateutil;
 import com.crazymakercircle.util.Logger;
 import com.crazymakercircle.util.ThreadUtil;
 import lombok.Data;
-import sun.misc.Unsafe;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -43,28 +42,28 @@ public class EchoClient {
         Logger.tcfo("客户端启动成功！");
 
         //启动接受线程
-        Processer processer = new Processer(socketChannel);
-        Commander commander = new Commander(processer);
+        Processor processor = new Processor(socketChannel);
+        Commander commander = new Commander(processor);
         new Thread(commander).start();
-        new Thread(processer).start();
+        new Thread(processor).start();
 
     }
 
     static class Commander implements Runnable {
-        Processer processer;
+        Processor processor;
 
-        Commander(Processer processer) throws IOException {
+        Commander(Processor processor) throws IOException {
             //Reactor初始化
-            this.processer = processer;
+            this.processor = processor;
         }
 
         public void run() {
             while (!Thread.interrupted()) {
 
-                ByteBuffer buffer = processer.getSendBuffer();
+                ByteBuffer buffer = processor.getSendBuffer();
 
                 Scanner scanner = new Scanner(System.in);
-                while (processer.hasData.get()) {
+                while (processor.hasData.get()) {
                     Logger.tcfo("还有消息没有发送完，请稍等");
                     ThreadUtil.sleepMilliSeconds(1000);
 
@@ -75,7 +74,7 @@ public class EchoClient {
                     String next = scanner.next();
                     buffer.put((Dateutil.getNow() + " >>" + next).getBytes());
 
-                    processer.hasData.set(true);
+                    processor.hasData.set(true);
                 }
 
             }
@@ -84,7 +83,7 @@ public class EchoClient {
 
 
     @Data
-    static class Processer implements Runnable {
+    static class Processor implements Runnable {
         ByteBuffer sendBuffer = ByteBuffer.allocate(NioDemoConfig.SEND_BUFFER_SIZE);
 
         ByteBuffer readBuffer = ByteBuffer.allocate(NioDemoConfig.SEND_BUFFER_SIZE);
@@ -94,7 +93,7 @@ public class EchoClient {
         final Selector selector;
         final SocketChannel channel;
 
-        Processer(SocketChannel channel) throws IOException {
+        Processor(SocketChannel channel) throws IOException {
             //Reactor初始化
             selector = Selector.open();
 
