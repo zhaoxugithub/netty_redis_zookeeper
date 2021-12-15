@@ -1,4 +1,4 @@
-package com.crazymakercircle.iodemo.zero;
+package com.crazymakercircle.iodemo.zeroCopy;
 
 import com.crazymakercircle.NioDemoConfig;
 import com.crazymakercircle.util.IOUtil;
