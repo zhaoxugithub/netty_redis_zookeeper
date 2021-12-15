@@ -38,9 +38,12 @@ public class ReflectionUtil
         StackTraceElement stack[] = Thread.currentThread().getStackTrace();
         // 获得调用方法名
         String[] className = stack[3].getClassName().split("\\.");
-        String fullName = className[className.length - 1] + ":" + stack[3].getMethodName();
+//        String fullName = className[className.length - 1] + ":" + stack[3].getMethodName();
+        String fullName = className[className.length - 1] + ":" + stack[3].getMethodName() + ":" + stack[3].getLineNumber();
         return fullName;
     }
+
+
 
     /**
      * 获得调用方法的类名+方法名

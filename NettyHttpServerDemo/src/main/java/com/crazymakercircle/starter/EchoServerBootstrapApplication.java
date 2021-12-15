@@ -1,4 +1,4 @@
-package com.crazymakercircle.Bootstrap;
+package com.crazymakercircle.starter;
 
 import com.crazymakercircle.netty.http.echo.HttpEchoServer;
 import org.springframework.boot.SpringApplication;

@@ -12,40 +12,42 @@ import java.util.Properties;
 /**
  * @author
  */
-public class ConfigProperties
-{
+public class ConfigProperties {
 
-    private String properiesName = "";
+    private String propertyFileName = "";
     private Properties properties = new Properties();
 
 
-    public ConfigProperties()
-    {
+    public ConfigProperties() {
 
     }
 
-    public ConfigProperties(String fileName)
-    {
-        this.properiesName = fileName;
+    public ConfigProperties(String fileName) {
+        this.propertyFileName = fileName;
     }
 
 
-    protected void loadFromFile()
-    {
+    protected void loadFromFile() {
         InputStream in = null;
         InputStreamReader ireader = null;
-        try
-        {
-            String filePath = IOUtil.getResourcePath(properiesName);
-            in = new FileInputStream(filePath);
-            //解决读非UTF-8编码的配置文件时，出现的中文乱码问题
-            ireader = new InputStreamReader(in, "utf-8");
+
+        try {
+
+            ClassLoader loader = ConfigProperties.class.getClassLoader();
+            in = loader.getResourceAsStream(propertyFileName);
+
+            if (null != in) {
+                ireader = new InputStreamReader(in, "utf-8");
+            } else {
+                String filePath = IOUtil.getResourcePath(propertyFileName);
+                in = new FileInputStream(filePath);
+                //解决读非UTF-8编码的配置文件时，出现的中文乱码问题
+                ireader = new InputStreamReader(in, "utf-8");
+            }
             properties.load(ireader);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally
-        {
+        } finally {
             IOUtil.closeQuietly(ireader);
         }
     }
@@ -57,8 +59,7 @@ public class ConfigProperties
      * @param key
      * @return
      */
-    public String readProperty(String key)
-    {
+    public String readProperty(String key) {
         String value = "";
 
         value = properties.getProperty(key);
@@ -67,23 +68,20 @@ public class ConfigProperties
     }
 
 
-    public String getValue(String key)
-    {
+    public String getValue(String key) {
 
         return readProperty(key);
 
     }
 
-    public int getIntValue(String key)
-    {
+    public int getIntValue(String key) {
 
         return Integer.parseInt((readProperty(key)));
 
     }
 
     public static ConfigProperties loadFromFile(Class aClass)
-            throws IllegalAccessException
-    {
+            throws IllegalAccessException {
 
         ConfigProperties propertiesUtil = null;
 
@@ -91,12 +89,10 @@ public class ConfigProperties
         return propertiesUtil;
     }
 
-    public static void loadAnnotations(Class aClass)
-    {
+    public static void loadAnnotations(Class aClass) {
 
         ConfigProperties configProperties = null;
-        try
-        {
+        try {
             configProperties = loadFromFile(aClass);
 
 
@@ -104,8 +100,7 @@ public class ConfigProperties
 
             Field[] fields = aClass.getDeclaredFields();
 
-        } catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }

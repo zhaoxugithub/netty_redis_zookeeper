@@ -7,7 +7,7 @@ public class NioDemoConfig extends ConfigProperties
 
 
     static ConfigProperties singleton
-            = new NioDemoConfig("/system.properties");
+            = new NioDemoConfig("system.properties");
 
     private NioDemoConfig(String fileName)
     {
@@ -33,6 +33,13 @@ public class NioDemoConfig extends ConfigProperties
             = singleton.getValue("file.resource.dest.path");
 
 
+    //mmap文件路径
+
+    public static final String MMAP_DEMO_PATH_FILE
+            = singleton.getValue("mmap.demo.path.file");
+
+    public static final String LOCK_MEM_DEMO_PATH_FILE
+            = singleton.getValue("lock.mem.demo.path.file");
     //发送文件路径
 
     public static final String SOCKET_SEND_FILE

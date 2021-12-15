@@ -5,8 +5,10 @@
 package com.crazymakercircle.util;
 
 
-public class Logger
-{
+import org.slf4j.helpers.FormattingTuple;
+import org.slf4j.helpers.MessageFormatter;
+
+public class Logger {
     /**
      * 信息输出
      *
@@ -31,7 +33,13 @@ public class Logger
      * @param s 待输出的字符串形参
      */
     synchronized public static void cfo(Object s) {
-        System.out.println(ReflectionUtil.getCallClassMethod() + ":" + s);
+
+        System.out.println(ReflectionUtil.getCallClassMethod() + ":: " + s);
+    }
+
+    synchronized public static void cfo(String var1, Object... var2) {
+        FormattingTuple format = MessageFormatter.arrayFormat(var1, var2);
+        System.out.println(ReflectionUtil.getCallClassMethod() + ":: " + format.getMessage());
     }
 
     /**
@@ -40,14 +48,11 @@ public class Logger
      * @param s 待输出的字符串形参
      */
     synchronized public static void tcfo(Object s) {
-        String cft= "["+Thread.currentThread().getName()+"|"+ReflectionUtil.getNakeCallClassMethod()+"]";
+        String cft = "[" + Thread.currentThread().getName() + "|" + ReflectionUtil.getNakeCallClassMethod() + "]";
         String content = null;
-        if (null != s)
-        {
+        if (null != s) {
             content = s.toString().trim();
-        }
-        else
-        {
+        } else {
             content = "";
         }
 
@@ -63,20 +68,17 @@ public class Logger
     public static void hint(Object s) {
         System.out.println("/--" + s + "--/");
     }
+
     /**
      * 带着方法名输出，方法名称放在前面
      *
      * @param s 待输出的字符串形参
      */
-    public static void debug(Object s)
-    {
+    public static void debug(Object s) {
         String content = null;
-        if (null != s)
-        {
+        if (null != s) {
             content = s.toString().trim();
-        }
-        else
-        {
+        } else {
             content = "";
         }
 
@@ -90,15 +92,11 @@ public class Logger
      *
      * @param s 待输出的字符串形参
      */
-    synchronized public static void info(Object s)
-    {
+    synchronized public static void info(Object s) {
         String content = null;
-        if (null != s)
-        {
+        if (null != s) {
             content = s.toString().trim();
-        }
-        else
-        {
+        } else {
             content = "";
         }
         String cft = "[" + Thread.currentThread().getName() + "|" + ReflectionUtil.getNakeCallClassMethod() + "]";
@@ -108,16 +106,16 @@ public class Logger
 
     }
 
+
     /**
      * 带着线程名+类名+方法名称输出
      *
      * @param args 待输出的字符串形参
      */
-    synchronized public static void info(Object... args)
-    {
+    synchronized public static void info(Object... args) {
         StringBuilder content = new StringBuilder();
         for (int i = 0; i < args.length; i++) {
-            content.append(args[i]!=null?args[i].toString():"null");
+            content.append(args[i] != null ? args[i].toString() : "null");
             content.append(" ");
         }
 
@@ -133,11 +131,10 @@ public class Logger
      *
      * @param args 待输出的字符串形参
      */
-    synchronized public static void error(Object... args)
-    {
+    synchronized public static void error(Object... args) {
         StringBuilder content = new StringBuilder();
         for (int i = 0; i < args.length; i++) {
-            content.append(args[i]!=null?args[i].toString():"null");
+            content.append(args[i] != null ? args[i].toString() : "null");
             content.append(" ");
         }
 

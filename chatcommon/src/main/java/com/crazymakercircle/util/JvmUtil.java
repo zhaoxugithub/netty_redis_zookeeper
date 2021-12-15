@@ -7,6 +7,15 @@ import java.lang.management.RuntimeMXBean;
 public class JvmUtil
 {
 
+    public static final long getMxMemory()
+    {
+      return   Runtime.getRuntime().maxMemory();
+    }
+
+    /**
+     * 获取进程id
+     * @return  进程id
+     */
     public static final int getProcessID()
     {
         //  ManagementFactory是一个在运行时管理和监控Java VM的工厂类
@@ -18,4 +27,10 @@ public class JvmUtil
         String jvmInstanceName = runtimeMXBean.getName();
         return Integer.valueOf(jvmInstanceName.split("@")[0]).intValue();
     }
+
+
+    public static void main(String[] args) {
+        System.out.println("getMxMemory() = " + getMxMemory() /1024/1024/1024+" G");
+    }
+
 }

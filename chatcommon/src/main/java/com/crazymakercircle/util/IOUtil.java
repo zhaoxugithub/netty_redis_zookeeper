@@ -6,6 +6,9 @@
 package com.crazymakercircle.util;
 
 
+import sun.misc.Cleaner;
+import sun.nio.ch.DirectBuffer;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 
@@ -204,6 +208,13 @@ public class IOUtil {
         }
 
         return outStream.toByteArray();
+    }
+
+    public static void unmap(MappedByteBuffer mappedByteBuffer) {
+
+        Cleaner cl = ((DirectBuffer)mappedByteBuffer).cleaner();
+        if (cl != null)
+            cl.clean();
     }
 
 }
