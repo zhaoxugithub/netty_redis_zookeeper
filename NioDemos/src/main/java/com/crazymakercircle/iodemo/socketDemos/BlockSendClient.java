@@ -20,7 +20,7 @@ public class BlockSendClient extends Socket
 
     private FileInputStream fis;
 
-    private DataOutputStream dos;
+    private DataOutputStream outputStream;
 
     /**
      * 构造函数<br/>
@@ -52,12 +52,12 @@ public class BlockSendClient extends Socket
             if (file.exists())
             {
                 fis = new FileInputStream(file);
-                dos = new DataOutputStream(client.getOutputStream());
-                dos.writeLong(file.length());
-                dos.flush();
+                outputStream = new DataOutputStream(client.getOutputStream());
+                outputStream.writeLong(file.length());
+                outputStream.flush();
                 // 文件名和长度
-                dos.writeUTF("copy_" + file.getName());
-                dos.flush();
+                outputStream.writeUTF("copy_" + file.getName());
+                outputStream.flush();
 
 
                 // 开始传输文件
@@ -67,8 +67,8 @@ public class BlockSendClient extends Socket
                 long progress = 0;
                 while ((length = fis.read(bytes, 0, bytes.length)) != -1)
                 {
-                    dos.write(bytes, 0, length);
-                    dos.flush();
+                    outputStream.write(bytes, 0, length);
+                    outputStream.flush();
                     progress += length;
                     Logger.debug("| " + (100 * progress / file.length()) + "% |");
                 }
@@ -84,7 +84,7 @@ public class BlockSendClient extends Socket
         {
 
             IOUtil.closeQuietly(fis);
-            IOUtil.closeQuietly(dos);
+            IOUtil.closeQuietly(outputStream);
             IOUtil.closeQuietly(client);
 
         }
