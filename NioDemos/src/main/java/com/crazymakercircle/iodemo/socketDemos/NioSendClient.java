@@ -92,32 +92,32 @@ public class NioSendClient {
             socketChannel.write(buffer);
             Logger.info("Client 文件名称长度发送完成:", fileNameLen);
 
-            //清空
-            buffer.clear();
 
             // 发送文件名称
             socketChannel.write(fileNameByteBuffer);
             Logger.info("Client 文件名称发送完成:", file.getName());
             //发送文件长度
+            //清空
+            buffer.clear();
             buffer.putInt((int) file.length());
             //切换到读模式
             buffer.flip();
             //写入文件长度
             socketChannel.write(buffer);
-            buffer.clear();
             Logger.info("Client 文件长度发送完成:", file.length());
-
 
             //发送文件内容
             Logger.debug("开始传输文件");
             int length = 0;
-            long progress = 0;
+            long offset = 0;
+            buffer.clear();
             while ((length = fileChannel.read(buffer)) > 0) {
                 buffer.flip();
                 socketChannel.write(buffer);
+
+                offset += length;
+                Logger.debug("| " + (100 * offset / file.length()) + "% |");
                 buffer.clear();
-                progress += length;
-                Logger.debug("| " + (100 * progress / file.length()) + "% |");
             }
 
             //等待一分钟关闭连接

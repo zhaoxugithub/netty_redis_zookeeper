@@ -53,7 +53,7 @@ public class NioReceiveServer {
         InetSocketAddress remoteAddress;
 
         //输出的文件通道
-        FileChannel outChannel;
+        FileChannel fileChannel;
 
         //接收长度
         long receiveLength;
@@ -224,7 +224,7 @@ public class NioReceiveServer {
 
                     }
                     FileChannel fileChannel = new FileOutputStream(file).getChannel();
-                    session.outChannel = fileChannel;
+                    session.fileChannel = fileChannel;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -258,7 +258,7 @@ public class NioReceiveServer {
 
                 // 写入文件
                 try {
-                    session.outChannel.write(buffer);
+                    session.fileChannel.write(buffer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -271,7 +271,7 @@ public class NioReceiveServer {
 
 
     private void finished(Session session) {
-        IOUtil.closeQuietly(session.outChannel);
+        IOUtil.closeQuietly(session.fileChannel);
         Logger.info("上传完毕");
         Logger.debug("文件接收成功,File Name：" + session.fileName);
         Logger.debug(" Size：" + IOUtil.getFormatFileSize(session.fileLength));
