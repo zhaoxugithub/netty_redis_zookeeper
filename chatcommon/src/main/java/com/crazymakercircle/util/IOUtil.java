@@ -53,6 +53,11 @@ public class IOUtil {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+        if(JvmUtil.isWin())
+        {
+            return decodePath.substring(1);
+        }
         return decodePath;
     }
 

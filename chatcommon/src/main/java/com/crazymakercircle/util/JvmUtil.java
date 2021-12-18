@@ -33,4 +33,11 @@ public class JvmUtil
         System.out.println("getMxMemory() = " + getMxMemory() /1024/1024/1024+" G");
     }
 
+    public static boolean isWin() {
+        String os = System.getProperty("os.name");
+        if(os.toLowerCase().startsWith("win")){
+            return  true;
+        }
+        return  false;
+    }
 }

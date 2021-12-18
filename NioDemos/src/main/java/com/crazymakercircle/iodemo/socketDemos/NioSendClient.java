@@ -53,6 +53,7 @@ public class NioSendClient {
             if (!file.exists()) {
                 srcPath = IOUtil.getResourcePath(srcPath);
                 Logger.debug("srcPath=" + srcPath);
+                file = new File(srcPath);
                 if (!file.exists()) {
                     Logger.debug("文件不存在");
                     return;
@@ -83,7 +84,6 @@ public class NioSendClient {
             //发送文件名称长度
 //            int fileNameLen =     fileNameByteBuffer.capacity();
             //
-            // 此处的bug，由小伙伴  @君莫问 发现， 缓冲区的数据长度为limit，而不是  capacity
             int fileNameLen = fileNameByteBuffer.remaining();
             buffer.clear();
             buffer.putInt(fileNameLen);

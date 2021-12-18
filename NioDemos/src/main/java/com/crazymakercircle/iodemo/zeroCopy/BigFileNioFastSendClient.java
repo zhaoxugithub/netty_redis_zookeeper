@@ -22,7 +22,7 @@ import static com.crazymakercircle.config.Constants.BIG_BUFFER_SIZE;
  * Created by 尼恩@ 疯创客圈
  */
 
-public class BigFileNioSendClient {
+public class BigFileNioFastSendClient {
 
 
     /**
@@ -31,7 +31,7 @@ public class BigFileNioSendClient {
      *
      * @throws Exception
      */
-    public BigFileNioSendClient() {
+    public BigFileNioFastSendClient() {
 
     }
 
@@ -115,7 +115,7 @@ public class BigFileNioSendClient {
             long totalCount = 0;
             // 使用零拷贝将文件数据传到服务器, 循环终止条件是传输结果小于等于 0
             while ( totalCount< file.length()) {
-                 //rockemq ,kafka 使用了这个 transferTo
+                 //kafka 使用了这个 transferTo
                 //一次传输128M
                 transferLen = sourceChannel.transferTo(totalCount, BIG_BUFFER_SIZE, socketChannel);
                 Logger.debug(" 此次 文件传输完成:"+transferLen);
@@ -144,7 +144,7 @@ public class BigFileNioSendClient {
      */
     public static void main(String[] args) {
 
-        BigFileNioSendClient client = new BigFileNioSendClient(); // 启动客户端连接
+        BigFileNioFastSendClient client = new BigFileNioFastSendClient(); // 启动客户端连接
         client.sendFile(); // 传输文件
 
 
