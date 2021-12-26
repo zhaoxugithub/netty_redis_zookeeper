@@ -32,22 +32,26 @@ public class FileMmapDemo {
      * mmap读写文件
      */
     @Test
-    public static void mmapWriteFile() {
+    public  void mmapWriteFile() {
 
         String sourcePath = NioDemoConfig.MMAP_FILE_RESOURCE_SRC_PATH;
         String decodePath = IOUtil.getResourcePath(sourcePath);
 
         Logger.debug("decodePath=" + decodePath);
 
-        //向文件中存1M的数据
+        //向文件中存1k的数据
         int length = 1024;//
         try (FileChannel channel = new RandomAccessFile(decodePath, "rw").getChannel();) {
 
             //一个整数4个字节
             MappedByteBuffer mapBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, length);
+
+            // 内存的写入
             for (int i = 0; i < length; i++) {
                 mapBuffer.put((byte) (Integer.valueOf('a') + i % 26));
             }
+
+            // 内存的读取
             for (int i = 0; i < length; i++) {
                 if (i % 50 == 0) System.out.println("");
                 //像数组一样访问
@@ -69,7 +73,7 @@ public class FileMmapDemo {
      */
 
     @Test
-    public static void mmapPrivate() {
+    public  void mmapPrivate() {
 
         String sourcePath = NioDemoConfig.MMAP_FILE_RESOURCE_SRC_PATH;
         String decodePath = IOUtil.getResourcePath(sourcePath);
@@ -84,7 +88,8 @@ public class FileMmapDemo {
             //通过channel进行内存映射，获取一个虚拟内存区域VMA
             MappedByteBuffer mapBuffer = channel.map(FileChannel.MapMode.PRIVATE, 0, length);
             for (int i = 0; i < length; i++) {
-                mapBuffer.put((byte) (Integer.valueOf('a') + i % 26));
+//                mapBuffer.put((byte) (Integer.valueOf('a') + i % 26));
+                mapBuffer.put((byte) (Integer.valueOf('a') +0));
             }
             for (int i = 0; i < length; i++) {
                 if (i % 50 == 0) System.out.println("");

@@ -35,7 +35,7 @@ public class ShareMemory {
             randomAccessFile = new RandomAccessFile(decodePath, "rw");
             //获取相应的文件通道  
             fc = randomAccessFile.getChannel();
-             //将此通道的文件区域直接映射到内存中。
+             //将此通道的文件区域直接映射到虚拟空间中。
             mapBuf = fc.map(FileChannel.MapMode.READ_WRITE, 0, fsize);
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@ public class ShareMemory {
         //定义文件区域锁定的标记。  
         FileLock fl = null;
         try {
-            fl = fc.lock(pos, len, false);
+            fl = fc.lock(pos, len, true);
             if (fl != null) {
                 //System.out.println( "pos="+pos );  
                 mapBuf.position(pos);
