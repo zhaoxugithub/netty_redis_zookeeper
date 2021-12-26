@@ -60,7 +60,7 @@ public class BigFileNioReceiveServer {
     }
 
     private ByteBuffer buffer
-            = ByteBuffer.allocate(NioDemoConfig.SERVER_BUFFER_SIZE);
+            = ByteBuffer.allocateDirect(NioDemoConfig.SERVER_BUFFER_SIZE);
 
     //使用Map保存每个客户端传输，当OP_READ通道可读时，根据channel找到对应的对象
     Map<SelectableChannel, Client> clientMap = new HashMap<SelectableChannel, Client>();

@@ -21,7 +21,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <curator.version>2.10.0</curator.version>
+
         <guava.version>17.0</guava.version>
         <httpclientutil.version>1.0</httpclientutil.version>
         <feign.form.spring.version>3.0.3</feign.form.spring.version>
@@ -120,23 +120,23 @@
             <artifactId>zookeeper</artifactId>
             <version>3.4.8</version>
         </dependency>
-
+<!--
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-session</artifactId>
-            <version>4.0.0</version>
+            <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.zookeeper</groupId>
                     <artifactId>zookeeper</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>4.0.0</version>
+            <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.zookeeper</groupId>
@@ -147,7 +147,7 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
-            <version>4.0.0</version>
+            <version>${curator.version}</version>
 
         </dependency>
 
