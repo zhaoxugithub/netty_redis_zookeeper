@@ -76,7 +76,7 @@ public class FileNIOCopyDemo {
                 outchannel = fos.getChannel();
 
                 int length = -1;
-                ByteBuffer buf = ByteBuffer.allocate(1024);
+                ByteBuffer buf = ByteBuffer.allocateDirect(1024);
                 //从输入通道读取到buf
                 while ((length = inChannel.read(buf)) != -1) {
 

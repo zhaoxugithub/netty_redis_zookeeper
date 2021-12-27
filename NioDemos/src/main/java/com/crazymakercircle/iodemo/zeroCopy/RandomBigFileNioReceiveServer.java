@@ -319,6 +319,7 @@ public class RandomBigFileNioReceiveServer {
 
 
     private void finished(Session session) {
+        session.mappedByteBuffer.force();
         IOUtil.unmap(session.mappedByteBuffer);
         IOUtil.closeQuietly(session.outChannel);
         Logger.info("上传完毕");
