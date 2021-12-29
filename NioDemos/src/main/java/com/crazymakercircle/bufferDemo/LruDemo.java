@@ -28,7 +28,7 @@ public class LruDemo {
     @Test
     public  void testLRUCache() {
 
-        SimpleLRUCache cache = new SimpleLRUCache( 2 /* 缓存容量 */ );
+        LRUCache cache = new LRUCache( 2 /* 缓存容量 */ );
         cache.put(1, 1);
         cache.put(2, 2);
         Logger.cfo(cache.get(1));       // 返回  1
