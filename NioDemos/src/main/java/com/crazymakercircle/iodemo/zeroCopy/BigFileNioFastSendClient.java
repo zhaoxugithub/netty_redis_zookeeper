@@ -104,10 +104,10 @@ public class BigFileNioFastSendClient {
             Logger.info("Client 文件长度发送完成:", file.length());
 
             //使用sendfile:读取磁盘文件，并网络发送
-            FileChannel sourceChannel = new RandomAccessFile(file, "rw").getChannel();
+            FileChannel fileChannel = new RandomAccessFile(file, "rw").getChannel();
 
             //发送文件内容
-            Logger.debug("使用sendfile，开始传输文件：" + sourceChannel.size());
+            Logger.debug("使用sendfile，开始传输文件：" + fileChannel.size());
 
 
             // 零拷贝传输数据, 注意记录每次拷贝的起始位置
@@ -117,7 +117,7 @@ public class BigFileNioFastSendClient {
             while ( totalCount< file.length()) {
                  //kafka 使用了这个 transferTo
                 //一次传输128M
-                transferLen = sourceChannel.transferTo(totalCount, BIG_BUFFER_SIZE, socketChannel);
+                transferLen = fileChannel.transferTo(totalCount, BIG_BUFFER_SIZE, socketChannel);
                 Logger.debug(" 此次 文件传输完成:"+transferLen);
                 totalCount += transferLen;
             }
@@ -129,7 +129,7 @@ public class BigFileNioFastSendClient {
             ThreadUtil.sleepSeconds(60);
             // 关闭连接
             socketChannel.close();
-            sourceChannel.close();
+            fileChannel.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

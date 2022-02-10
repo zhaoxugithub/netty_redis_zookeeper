@@ -16,30 +16,42 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.crazymakercircle.config.Constants.BIG_BUFFER_SIZE;
 
 
 /**
  * 文件传输Server端
  * Created by 尼恩@ 疯创客圈
  */
-public class BigFileNioReceiveServer {
+public class BigFileNioSeqAppendReceiveServer {
 
     //接受文件路径
     private static final String RECEIVE_PATH = NioDemoConfig.SOCKET_RECEIVE_PATH;
 
     private Charset charset = Charset.forName("UTF-8");
+    private static volatile boolean over;
+
+    public boolean isOver() {
+        return over;
+    }
+
 
     /**
      * 服务器端保存的客户端对象，对应一个客户端文件
      */
     static class Session {
-        public int recieveCount = 0;
+        protected final AtomicInteger wrotePosition = new AtomicInteger(0);
+
+
         int step = 1; //1 读取文件名称的长度，2 读取文件名称  ，3 ，读取文件内容的长度， 4 读取文件内容
         //文件名称
         String fileName = null;
 
         //长度
-        long fileLength;
+        long fileSize;
+
         int fileNameLength;
 
         //开始传输的时间
@@ -49,21 +61,40 @@ public class BigFileNioReceiveServer {
         InetSocketAddress remoteAddress;
 
         //输出的文件通道
-        FileChannel outChannel;
+        FileChannel fileChannel;
 
         //接收长度
         long receiveLength;
 
         public boolean isFinished() {
-            return receiveLength >= fileLength;
+            return receiveLength >= fileSize;
         }
+
+
+        public boolean appendMessage(ByteBuffer data) {
+            int currentPos = this.wrotePosition.get();
+            int length = data.remaining();
+            try {
+                this.fileChannel.position(currentPos);
+                this.fileChannel.write(data);
+            } catch (Throwable e) {
+                Logger.cfo("Error occurred when append message to mappedFile.");
+                e.printStackTrace();
+                return false;
+            }
+            this.wrotePosition.addAndGet(length);
+            return true;
+        }
+
+
+
     }
 
     private ByteBuffer buffer
-            = ByteBuffer.allocateDirect(NioDemoConfig.SERVER_BUFFER_SIZE);
+            = ByteBuffer.allocateDirect(BIG_BUFFER_SIZE);
 
     //使用Map保存每个客户端传输，当OP_READ通道可读时，根据channel找到对应的对象
-    Map<SelectableChannel, Session> clientMap = new HashMap<SelectableChannel, Session>();
+    Map<SelectableChannel, Session> sessionMap = new HashMap<SelectableChannel, Session>();
 
 
     public void startServer() throws IOException {
@@ -110,7 +141,7 @@ public class BigFileNioReceiveServer {
                     Session session = new Session();
                     session.remoteAddress
                             = (InetSocketAddress) socketChannel.getRemoteAddress();
-                    clientMap.put(socketChannel, session);
+                    sessionMap.put(socketChannel, session);
                     Logger.debug(socketChannel.getRemoteAddress() + "连接成功...");
 
                 } else if (key.isReadable()) {
@@ -123,12 +154,6 @@ public class BigFileNioReceiveServer {
         }
     }
 
-    volatile boolean over = false;
-
-    private boolean isOver() {
-        return over;
-    }
-
     /**
      * 处理客户端传输过来的数据
      */
@@ -136,7 +161,7 @@ public class BigFileNioReceiveServer {
 
         SocketChannel socketChannel = (SocketChannel) key.channel();
         int num = 0;
-        Session session = clientMap.get(key.channel());
+        Session session = sessionMap.get(key.channel());
 
         buffer.clear();
         while (4 != session.step) {
@@ -149,41 +174,63 @@ public class BigFileNioReceiveServer {
             //切换到读模式
             buffer.flip();
 
-            process(session, buffer);
+            processBuffer(session, buffer);
             buffer.clear();
 
         }
 
-        Logger.cfo("伪零复制的开始位置：" + session.recieveCount);
-        while (session.recieveCount < session.fileLength) {
-            long transferLen = session.outChannel.transferFrom(socketChannel, session.recieveCount, 1024 * 1024 * 128);
-            Logger.cfo("transferLen ：" + transferLen);
-            session.recieveCount += transferLen;
-        }
-        Logger.cfo("零复制 over，client.fileLength ：" + session.fileLength);
+        transferData(socketChannel, session);
+        Logger.cfo("零复制 over，client.fileLength ：" + session.fileSize);
         // client.outChannel.force(true);
 
         finished(session);
-
         over = true;
     }
 
-    private void process(Session session, ByteBuffer buffer) {
+    private void transferData(SocketChannel socketChannel, Session session) throws IOException {
+        Logger.cfo("零复制开始位置：" + session.wrotePosition);
+        while (session.wrotePosition.get() < session.fileSize) {
+
+
+            buffer.clear();
+            int num = socketChannel.read(buffer);
+            Logger.cfo("收到的字节数 = " + num);
+            if (num <= 0) {
+                continue;
+            }
+
+            //切换到读模式
+            buffer.flip();
+            // 追加内容
+
+            ByteBuffer slice = buffer.slice();
+            long transferLen = slice.remaining();
+            Logger.cfo("transferLen ：" + transferLen);
+
+            session.appendMessage(slice);
+
+        }
+
+        Logger.cfo("transfer 传输结束");
+
+    }
+
+    private void processBuffer(Session session, ByteBuffer buffer) {
         while (len(buffer) > 0) {   //客户端发送过来的，首先处理文件名长度
             if (1 == session.step) {
                 int fileNameLengthByteLen = len(buffer);
-                System.out.println("读取文件名称长度之前，可读取的字节数 = " + fileNameLengthByteLen);
-                System.out.println("读取文件名称长度之前，buffer.remaining() = " + buffer.remaining());
-                System.out.println("读取文件名称长度之前，buffer.capacity() = " + buffer.capacity());
-                System.out.println("读取文件名称长度之前，buffer.limit() = " + buffer.limit());
-                System.out.println("读取文件名称长度之前，buffer.position() = " + buffer.position());
+                Logger.cfo("读取文件名称长度之前，可读取的字节数 = " + fileNameLengthByteLen);
+                Logger.cfo("读取文件名称长度之前，buffer.remaining() = " + buffer.remaining());
+                Logger.cfo("读取文件名称长度之前，buffer.capacity() = " + buffer.capacity());
+                Logger.cfo("读取文件名称长度之前，buffer.limit() = " + buffer.limit());
+                Logger.cfo("读取文件名称长度之前，buffer.position() = " + buffer.position());
 
 
                 //获取文件名称长度
                 session.fileNameLength = buffer.getInt();
 
-                System.out.println("读取文件名称长度之后，buffer.remaining() = " + buffer.remaining());
-                System.out.println("读取文件名称长度 = " + session.fileNameLength);
+                Logger.cfo("读取文件名称长度之后，buffer.remaining() = " + buffer.remaining());
+                Logger.cfo("读取文件名称长度 = " + session.fileNameLength);
 
                 session.step = 2;
 
@@ -202,7 +249,7 @@ public class BigFileNioReceiveServer {
 
                 // 文件名
                 String fileName = new String(fileNameBytes, charset);
-                System.out.println("读取文件名称 = " + fileName);
+                Logger.cfo("读取文件名称 = " + fileName);
 
                 File directory = new File(RECEIVE_PATH);
                 if (!directory.exists()) {
@@ -223,7 +270,7 @@ public class BigFileNioReceiveServer {
                     }
 
                     FileChannel fileChannel = new RandomAccessFile(file, "rw").getChannel();
-                    session.outChannel = fileChannel;
+                    session.fileChannel = fileChannel;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -240,22 +287,20 @@ public class BigFileNioReceiveServer {
                     throw new RuntimeException("出现半包问题，需要更加复杂的拆包方案");
                 }
                 //获取文件内容长度
-                session.fileLength = buffer.getInt();
+                session.fileSize = buffer.getInt();
+                Logger.cfo("读取文件内容长度 = " + session.fileSize);
 
-                System.out.println("读取文件内容长度之后，buffer.remaining() = " + buffer.remaining());
-                System.out.println("读取文件内容长度 = " + session.fileLength);
+
+                Logger.cfo("文件映射完成");
+                Logger.cfo("读取文件内容长度之后，buffer.remaining() = " + buffer.remaining());
+
                 session.startTime = System.currentTimeMillis();
                 if (len(buffer) > 0) {
-                    session.recieveCount = len(buffer);
-                    // 写入文件
-                    try {
-                        session.outChannel.write(buffer);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (session.isFinished()) {
-                        finished(session);
-                    }
+                    // 追加内容
+
+                    ByteBuffer slice = buffer.slice();
+                    session.appendMessage(slice);
+
                 }
 
                 session.step = 4;
@@ -267,10 +312,10 @@ public class BigFileNioReceiveServer {
 
 
     private void finished(Session session) {
-        IOUtil.closeQuietly(session.outChannel);
+        IOUtil.closeQuietly(session.fileChannel);
         Logger.info("上传完毕");
         Logger.debug("文件接收成功,File Name：" + session.fileName);
-        Logger.debug(" Size：" + IOUtil.getFormatFileSize(session.fileLength));
+        Logger.debug(" Size：" + IOUtil.getFormatFileSize(session.fileSize));
         long endTime = System.currentTimeMillis();
         Logger.debug("NIO IO 传输毫秒数：" + (endTime - session.startTime));
     }
@@ -282,7 +327,7 @@ public class BigFileNioReceiveServer {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        BigFileNioReceiveServer server = new BigFileNioReceiveServer();
+        BigFileNioFastReceiveServer server = new BigFileNioFastReceiveServer();
         server.startServer();
     }
 
