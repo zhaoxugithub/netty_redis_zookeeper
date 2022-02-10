@@ -39,9 +39,11 @@ public class UDPServer {
                     Logger.tcfo(new String(buffer.array(), 0, buffer.limit()));
                     buffer.clear();
                 }
+
+                // 如果不删除，下一次又会被select函数选中
+                iterator.remove();
             }
-            iterator.remove();
-        }
+          }
 
         selector.close();
         datagramChannel.close();
