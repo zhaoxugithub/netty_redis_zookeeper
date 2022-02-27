@@ -29,5 +29,9 @@ public class DbufferDemo {
             int j = intBuffer.getInt();
             Logger.debug("j = " + j);
         }
+
+        String s;
+
+        s.getBytes()
   }
 }
