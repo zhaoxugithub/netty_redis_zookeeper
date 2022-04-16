@@ -24,7 +24,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<WebSo
             String request = ((TextWebSocketFrame) frame).text();
             log.debug("服务端收到：" + request);
             //回显字符串
-            String echo = Dateutil.getTime() + "：" + request;
+//            String echo = Dateutil.getTime() + " echo：" + request;
+            String echo = "服务端 echo：" + request;
             TextWebSocketFrame echoFrame = new TextWebSocketFrame(echo);
             // 发送回显字符串
             ctx.channel().writeAndFlush(echoFrame);

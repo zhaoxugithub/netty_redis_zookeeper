@@ -255,12 +255,12 @@ public class HttpProtocolHelper
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
         //发送内容
-        ChannelFuture flushPromise = ctx.writeAndFlush(response);
+        ChannelFuture writePromise = ctx.writeAndFlush(response);
 
         if (!keepAlive)
         {
             // 如果不是长连接，发送完成之后，关闭连接
-            flushPromise.addListener(ChannelFutureListener.CLOSE);
+            writePromise.addListener(ChannelFutureListener.CLOSE);
         }
     }
 

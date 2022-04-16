@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to WebSocket Echo Server!</title>
+    <title> 疯狂创客圈  WebSocket Echo Server!</title>
     <style>
         body {
             width: 35em;
@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-<h1>WebSocket Echo Server!</h1>
+<h1>疯狂创客圈 WS Echo Server!</h1>
 <p>If you see this page, the WebSocket Echo Server is successfully opened.</p>
 <form onsubmit="return false;">
     <input type="text" name="message" value="请输入发送内容"/>
@@ -30,9 +30,9 @@
     if (!window.WebSocket) {
         window.WebSocket = window.MozWebSocket;
     }
-    //var domain="192.168.0.5:18899";
+    //var domain="192.168.20.101:18899";
     var domain = window.location.host;
-    //alert(domain)
+   // alert(domain)
     if (window.WebSocket) {
         //建立WebSocket连接
         socket = new WebSocket("ws://"+domain+"/ws","echo");
