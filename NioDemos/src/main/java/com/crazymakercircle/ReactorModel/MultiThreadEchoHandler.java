@@ -25,18 +25,13 @@ class MultiThreadEchoHandler implements Runnable {
         channel = c;
         channel.configureBlocking(false);
         channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
-
-        //唤醒选择,防止register时 boss线程被阻塞，netty 处理方式比较优雅，会在同一个线程注册事件，避免阻塞boss
-//        selector.wakeup();
-
         //仅仅取得选择键，后设置感兴趣的IO事件
         sk = channel.register(selector, 0);
         //将本Handler作为sk选择键的附件，方便事件dispatch
         sk.attach(this);
         //向sk选择键注册Read就绪事件
         sk.interestOps(SelectionKey.OP_READ);
-
-        //唤醒选择，是的OP_READ生效
+        //唤醒选择，使得OP_READ生效
         selector.wakeup();
         Logger.info("新的连接 注册完成");
 
@@ -44,10 +39,13 @@ class MultiThreadEchoHandler implements Runnable {
 
     public void run() {
         //异步任务，在独立的线程池中执行
+        //提交数据传输任务到线程池
+        //使得IO处理不在IO事件轮询线程中执行，在独立的线程池中执行
         pool.execute(new AsyncTask());
     }
 
     //异步任务，不在Reactor线程中执行
+    //数据传输与业务处理任务，不在IO事件轮询线程中执行，在独立的线程池中执行
     public synchronized void asyncRun() {
         try {
             if (state == SENDING) {

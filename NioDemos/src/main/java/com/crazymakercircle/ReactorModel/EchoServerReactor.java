@@ -40,8 +40,11 @@ class EchoServerReactor implements Runnable {
     public void run() {
         try {
             while (!Thread.interrupted()) {
-                selector.select();
+                selector.select(1000);
                 Set<SelectionKey> selected = selector.selectedKeys();
+                if (null == selected || selected.size() == 0) {
+                    continue;
+                }
                 Iterator<SelectionKey> it = selected.iterator();
                 while (it.hasNext()) {
                     //Reactor负责dispatch收到的事件

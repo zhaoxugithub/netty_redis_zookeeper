@@ -18,8 +18,10 @@ class EchoHandler implements Runnable {
 
     EchoHandler(Selector selector, SocketChannel c) throws IOException {
         channel = c;
+        //设置为非阻塞模式
         c.configureBlocking(false);
-        //仅仅取得选择键，后设置感兴趣的IO事件
+        //仅仅取得选择键，绑定事件处理器
+        // 后设置感兴趣的IO事件
         sk = channel.register(selector, 0);
 
         //将Handler作为选择键的附件
@@ -27,14 +29,14 @@ class EchoHandler implements Runnable {
 
         //第二步,注册Read就绪事件
         sk.interestOps(SelectionKey.OP_READ);
+        // 唤醒事件查询线程，在单线程模式下，这里没啥意义
         selector.wakeup();
     }
 
     public void run() {
 
         try {
-
-            if (state == SENDING) {
+            if (state == SENDING) {  //发送状态
                 //写入通道
                 channel.write(byteBuffer);
                 //写完后,准备开始从通道读,byteBuffer切换成写模式
@@ -43,7 +45,7 @@ class EchoHandler implements Runnable {
                 sk.interestOps(SelectionKey.OP_READ);
                 //写完后,进入接收的状态
                 state = RECIEVING;
-            } else if (state == RECIEVING) {
+            } else if (state == RECIEVING) {  //开始的时候，为接收状态
                 //从通道读
                 int length = 0;
                 while ((length = channel.read(byteBuffer)) > 0) {

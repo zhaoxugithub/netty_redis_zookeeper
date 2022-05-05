@@ -27,38 +27,39 @@ class MultiThreadEchoServerReactor {
 
     MultiThreadEchoServerReactor() throws IOException {
 
-        bossSelector = Selector.open();
         //初始化多个selector选择器
-        workSelectors[0] = Selector.open();
-        workSelectors[1] = Selector.open();
+        bossSelector = Selector.open();// 用于监听新连接事件
+        workSelectors[0] = Selector.open(); // 用于监听read、write事件
+        workSelectors[1] = Selector.open(); // 用于监听read、write事件
         serverSocket = ServerSocketChannel.open();
 
         InetSocketAddress address =
                 new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP,
                         NioDemoConfig.SOCKET_SERVER_PORT);
         serverSocket.socket().bind(address);
-        //非阻塞
-        serverSocket.configureBlocking(false);
 
-        //第一个selector,负责监控新连接事件
+        serverSocket.configureBlocking(false);//非阻塞
+
+        //bossSelector,负责监控新连接事件, 将 serverSocket注册到bossSelector
         SelectionKey sk =
                 serverSocket.register(bossSelector, SelectionKey.OP_ACCEPT);
-        //附加新连接处理handler处理器到SelectionKey（选择键）
+
+        //绑定Handler：新连接监控handler绑定到SelectionKey（选择键）
         sk.attach(new AcceptorHandler());
 
-        //处理新连接的反应器
+        //bossReactor反应器，处理新连接的bossSelector
         bossReactor = new Reactor(bossSelector);
 
-        //第一个子反应器，一子反应器负责一个选择器
-        Reactor subReactor1 = new Reactor(workSelectors[0]);
-        //第二个子反应器，一子反应器负责一个选择器
-        Reactor subReactor2 = new Reactor(workSelectors[1]);
-        workReactors = new Reactor[]{subReactor1, subReactor2};
+        //第一个子反应器，一子反应器负责一个worker选择器
+        Reactor workReactor1 = new Reactor(workSelectors[0]);
+        //第二个子反应器，一子反应器负责一个worker选择器
+        Reactor workReactor2 = new Reactor(workSelectors[1]);
+        workReactors = new Reactor[]{workReactor1, workReactor2};
     }
 
     private void startService() {
-        new Thread(bossReactor).start();
         // 一子反应器对应一条线程
+        new Thread(bossReactor).start();
         new Thread(workReactors[0]).start();
         new Thread(workReactors[1]).start();
     }
