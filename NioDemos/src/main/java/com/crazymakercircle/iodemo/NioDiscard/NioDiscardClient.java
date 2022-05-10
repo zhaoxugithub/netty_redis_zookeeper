@@ -32,6 +32,8 @@ public class NioDiscardClient {
         byteBuffer.put("hello world".getBytes());
         byteBuffer.flip();
         socketChannel.write(byteBuffer);
+        Logger.info("客户端写入成功");
+
         socketChannel.shutdownOutput();
         socketChannel.close();
     }

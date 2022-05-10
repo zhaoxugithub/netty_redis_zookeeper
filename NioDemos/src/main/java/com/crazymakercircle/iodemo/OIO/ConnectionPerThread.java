@@ -1,6 +1,7 @@
 package com.crazymakercircle.iodemo.OIO;
 
 import com.crazymakercircle.NioDemoConfig;
+import com.crazymakercircle.util.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -36,8 +37,11 @@ class ConnectionPerThread implements Runnable {
                     byte[] input = new byte[NioDemoConfig.SERVER_BUFFER_SIZE];
                     /* 读取数据 */
                     socket.getInputStream().read(input);
+
+                    Logger.info("收到："+new String(input));
+
                     /* 处理业务逻辑，获取处理结果 */
-                    byte[] output =null;
+                    byte[] output =input;
                     /* 写入结果 */
                     socket.getOutputStream().write(output);
                 } catch (IOException ex) { /*处理异常*/ }
