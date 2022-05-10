@@ -30,8 +30,5 @@ public class DbufferDemo {
             Logger.debug("j = " + j);
         }
 
-        String s;
-
-        s.getBytes()
   }
 }

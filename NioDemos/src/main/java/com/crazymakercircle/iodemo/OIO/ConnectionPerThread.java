@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-;
 
 class ConnectionPerThread implements Runnable {
     public void run() {
@@ -45,5 +44,9 @@ class ConnectionPerThread implements Runnable {
             }
         }
 
+    }
+
+    public static void main(String[] args) {
+      new  ConnectionPerThread().run();
     }
 }
