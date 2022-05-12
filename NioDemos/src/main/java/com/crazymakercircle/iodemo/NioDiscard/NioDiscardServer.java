@@ -55,9 +55,13 @@ public class NioDiscardServer {
                     ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                     int length = 0;
                     while ((length = socketChannel.read(byteBuffer)) > 0) {
+
                         byteBuffer.flip();
+
                         Logger.info(new String(byteBuffer.array(), 0, length));
+
                         byteBuffer.clear();
+
                     }
                     socketChannel.close();
                 }
