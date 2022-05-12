@@ -102,7 +102,7 @@ public class FileNIOCopyDemo {
                 IOUtil.closeQuietly(fis);
             }
             long endTime = System.currentTimeMillis();
-            Logger.debug("base 复制毫秒数：" + (endTime - startTime));
+            Logger.debug(" 复制毫秒数：" + (endTime - startTime));
 
         } catch (IOException e) {
             e.printStackTrace();
