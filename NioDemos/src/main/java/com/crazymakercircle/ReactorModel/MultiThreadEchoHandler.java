@@ -25,7 +25,7 @@ class MultiThreadEchoHandler implements Runnable {
         channel = c;
         channel.configureBlocking(false);
         channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
-        //唤醒选择，使得OP_READ生效
+        //唤醒选择，使得register 有效
         selector.wakeup();
         //仅仅取得选择键，后设置感兴趣的IO事件
         sk = channel.register(selector, 0);
