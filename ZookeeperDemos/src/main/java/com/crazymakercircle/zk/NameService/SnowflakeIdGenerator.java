@@ -37,7 +37,7 @@ public class SnowflakeIdGenerator {
     private static final long START_TIME = 1483200000000L;
 
     /**
-     * worker id 的bit数，最多支持8192个节点
+     * worker devId 的bit数，最多支持8192个节点
      */
     private static final int WORKER_ID_BITS = 13;
 
@@ -47,7 +47,7 @@ public class SnowflakeIdGenerator {
     private final static int SEQUENCE_BITS = 10;
 
     /**
-     * 最大的 worker id ，8091
+     * 最大的 worker devId ，8091
      * -1 的补码（二进制全1）右移13位, 然后取反
      */
     private final static long MAX_WORKER_ID = ~(-1L << WORKER_ID_BITS);
@@ -69,7 +69,7 @@ public class SnowflakeIdGenerator {
     private final static long TIMESTAMP_LEFT_SHIFT = WORKER_ID_BITS + SEQUENCE_BITS;
 
     /**
-     * 该项目的worker 节点 id
+     * 该项目的worker 节点 devId
      */
     private long workerId;
 
@@ -84,7 +84,7 @@ public class SnowflakeIdGenerator {
     private long sequence = 0L;
 
     /**
-     * Next id long.
+     * Next devId long.
      *
      * @return the nextId
      */

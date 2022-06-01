@@ -27,7 +27,7 @@ public class NettyDiscardServer {
     public void runServer() {
         //创建reactor 线程组
         EventLoopGroup bossLoopGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerLoopGroup = new NioEventLoopGroup();
+         EventLoopGroup workerLoopGroup = new NioEventLoopGroup();
 
         try {
             //1 设置reactor 线程组
@@ -40,6 +40,7 @@ public class NettyDiscardServer {
             b.option(ChannelOption.SO_KEEPALIVE, true);
             b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             b.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+            b.childOption(ChannelOption.TCP_NODELAY, true);
 
             //5 装配子通道流水线
             b.childHandler(new ChannelInitializer<SocketChannel>() {
@@ -56,7 +57,7 @@ public class NettyDiscardServer {
             Logger.info(" 服务器启动成功，监听端口: " +
                     channelFuture.channel().localAddress());
 
-            // 7 等待通道关闭的异步任务结束
+          // 7 等待通道关闭的异步任务结束
             // 服务监听通道会一直等待通道关闭的异步任务结束
             ChannelFuture closeFuture = channelFuture.channel().closeFuture();
             closeFuture.sync();

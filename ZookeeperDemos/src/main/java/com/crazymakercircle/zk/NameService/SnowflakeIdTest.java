@@ -30,7 +30,7 @@ public class SnowflakeIdTest
         final HashSet idSet = new HashSet();
         Collections.synchronizedCollection(idSet);
         long start = System.currentTimeMillis();
-        log.info(" start generate id *");
+        log.info(" start generate devId *");
         int threadCount = 10;
         int turn = 50000;
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
@@ -44,7 +44,7 @@ public class SnowflakeIdTest
                     {
                         if (j % 10000 == 0)
                         {
-                            log.info("第 " + j + "个 id 为:" + id);
+                            log.info("第 " + j + "个 devId 为:" + id);
                         }
                         idSet.add(id);
                     }
@@ -55,7 +55,7 @@ public class SnowflakeIdTest
         threadPool.shutdown();
 //        threadPool.awaitTermination(10, TimeUnit.SECONDS);
         long end = System.currentTimeMillis();
-        log.info(" end generate id ");
+        log.info(" end generate devId ");
         log.info("* cost " + (end - start) + " ms!");
     }
 }

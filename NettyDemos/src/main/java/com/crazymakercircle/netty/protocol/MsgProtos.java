@@ -23,7 +23,7 @@ public final class MsgProtos {
      * Unique ID number for this person.
      * </pre>
      *
-     * <code>uint32 id = 1;</code>
+     * <code>uint32 devId = 1;</code>
      */
     int getId();
 
@@ -132,7 +132,7 @@ public final class MsgProtos {
      * Unique ID number for this person.
      * </pre>
      *
-     * <code>uint32 id = 1;</code>
+     * <code>uint32 devId = 1;</code>
      */
     public int getId() {
       return id_;
@@ -502,7 +502,7 @@ public final class MsgProtos {
        * Unique ID number for this person.
        * </pre>
        *
-       * <code>uint32 id = 1;</code>
+       * <code>uint32 devId = 1;</code>
        */
       public int getId() {
         return id_;
@@ -512,7 +512,7 @@ public final class MsgProtos {
        * Unique ID number for this person.
        * </pre>
        *
-       * <code>uint32 id = 1;</code>
+       * <code>uint32 devId = 1;</code>
        */
       public Builder setId(int value) {
         
@@ -525,7 +525,7 @@ public final class MsgProtos {
        * Unique ID number for this person.
        * </pre>
        *
-       * <code>uint32 id = 1;</code>
+       * <code>uint32 devId = 1;</code>
        */
       public Builder clearId() {
         

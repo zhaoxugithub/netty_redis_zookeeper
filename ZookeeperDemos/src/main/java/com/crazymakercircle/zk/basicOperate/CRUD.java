@@ -92,9 +92,9 @@ public class CRUD {
     public void testmod() {
         for (int i = 0; i < 128; i++) {
             int id=1000+i;
-            System.out.print("id = " + id);
-            System.out.print("  id%2 = " + id%2 );
-            System.out.print("   id/2%16 = " + id/2%32 );
+            System.out.print("devId = " + id);
+            System.out.print("  devId%2 = " + id%2 );
+            System.out.print("   devId/2%16 = " + id/2%32 );
             System.out.println(" " );
         }
     }

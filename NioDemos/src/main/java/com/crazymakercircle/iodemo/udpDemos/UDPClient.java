@@ -29,8 +29,7 @@ public class UDPClient {
             buffer.flip();
             // 操作三：通过DatagramChannel数据报通道发送数据
             dChannel.send(buffer,
-                    new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP
-                            , NioDemoConfig.SOCKET_SERVER_PORT));
+                    new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP       , NioDemoConfig.SOCKET_SERVER_PORT));
             buffer.clear();
         }
         //操作四：关闭DatagramChannel数据报通道

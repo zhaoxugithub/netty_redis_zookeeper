@@ -77,8 +77,7 @@ class MultiThreadEchoServerReactor {
             try {
                 while (!Thread.interrupted()) {
                     //单位为毫秒
-                    selector.select();
-//                    selector.select(1000);
+                    selector.select(1000);
                     Set<SelectionKey> selectedKeys = selector.selectedKeys();
                     if (null == selectedKeys || selectedKeys.size() == 0) {
                         continue;

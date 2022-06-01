@@ -40,6 +40,7 @@ public class NettyEchoServer {
             b.option(ChannelOption.SO_KEEPALIVE, true);
             b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             b.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+            b.childOption(ChannelOption.SO_KEEPALIVE, true);
 
             //5 装配子通道流水线
             b.childHandler(new ChannelInitializer<SocketChannel>() {

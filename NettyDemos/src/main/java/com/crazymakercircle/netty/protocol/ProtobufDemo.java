@@ -54,7 +54,7 @@ public class ProtobufDemo
         data = outputStream.toByteArray();
         //二进制字节数组,反序列化成Protobuf 对象
         MsgProtos.Msg inMsg = MsgProtos.Msg.parseFrom(data);
-        Logger.info("id:=" + inMsg.getId());
+        Logger.info("devId:=" + inMsg.getId());
         Logger.info("content:=" + inMsg.getContent());
     }
 
@@ -69,7 +69,7 @@ public class ProtobufDemo
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         //从二进流,反序列化成Protobuf 对象
         MsgProtos.Msg inMsg = MsgProtos.Msg.parseFrom(inputStream);
-        Logger.info("id:=" + inMsg.getId());
+        Logger.info("devId:=" + inMsg.getId());
         Logger.info("content:=" + inMsg.getContent());
     }
 
@@ -86,7 +86,7 @@ public class ProtobufDemo
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
         //从二进流,反序列化成Protobuf 对象
         MsgProtos.Msg inMsg = MsgProtos.Msg.parseDelimitedFrom(inputStream);
-        Logger.info("id:=" + inMsg.getId());
+        Logger.info("devId:=" + inMsg.getId());
         Logger.info("content:=" + inMsg.getContent());
 
 

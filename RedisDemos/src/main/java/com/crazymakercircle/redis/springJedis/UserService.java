@@ -10,7 +10,7 @@ public interface UserService {
     /**
      * CRUD 之   查询
      *
-     * @param id id
+     * @param id devId
      * @return 用户
      */
     User getUser(long id);
@@ -25,7 +25,7 @@ public interface UserService {
     /**
      * CRUD 之 删除
      *
-     * @param id id
+     * @param id devId
      */
 
     void deleteUser(long id);

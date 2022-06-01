@@ -201,7 +201,7 @@ public class OsUtil
         {
             try
             {
-                isAdmin = "0".equals(getProcessPrint("id -u").trim());
+                isAdmin = "0".equals(getProcessPrint("devId -u").trim());
             } catch (IOException e)
             {
                 isAdmin = false;

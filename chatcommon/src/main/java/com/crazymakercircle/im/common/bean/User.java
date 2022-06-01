@@ -117,4 +117,53 @@ public class User implements Serializable {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
+
+    public static UserBuilder builder(){
+        return new UserBuilder();
+    }
+
+
+    /**
+     *   1、User类中创建一个静态内部类 Builder
+     *
+     *         2、Builder 类中，包含User类的全部属性
+     *
+     *         3、Builder 类中，每个属性创建赋值方法，并返回当前对象
+     *
+     *           4、Builder 类中，创建 build方法，返回User对象并赋值
+     *
+     *           5、User类中，创建静态builder方法，返回Builder对象
+     */
+    public static   class UserBuilder {
+        private String devId;
+        private String name ;
+        private Integer platform;
+
+        public UserBuilder devId(String id) {
+            this.devId = id ;
+            return this;
+        }
+
+        public UserBuilder name(String name) {
+            this.name = name ;
+            return this ;
+        }
+
+        public UserBuilder platform(Integer platform) {
+            this.platform = platform ;
+            return this;
+        }
+
+
+        public User build() {
+            User user= new User();
+            user.setDevId(devId);
+            user.setNickName(name);
+            user.setIntPlatFrom(platform);
+            return user;
+        }
+
+    }
+
+
 }

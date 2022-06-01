@@ -9,7 +9,7 @@ import lombok.Data;
  **/
 @Data
 public class JsonMsg {
-    //id Field(域)
+    //devId Field(域)
     private int id;
     //content Field(域)
     private String content = "疯狂创客圈-Java高并发社群";

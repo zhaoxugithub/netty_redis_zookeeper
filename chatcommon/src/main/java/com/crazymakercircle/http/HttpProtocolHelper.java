@@ -340,7 +340,7 @@ public class HttpProtocolHelper
         //设置缓存过期时间
         time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
         response.headers().set(HttpHeaderNames.EXPIRES, dateFormatter.format(time.getTime()));
-        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
+        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-platform=" + HTTP_CACHE_SECONDS);
 
         //最近修改时间
         String lastModified = dateFormatter.format(new Date(fileToCache.lastModified()));

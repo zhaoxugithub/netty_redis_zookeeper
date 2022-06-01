@@ -43,7 +43,7 @@ public class JsonMsgDemo {
 
         //JSON 字符串,反序列化成对象POJO
         JsonMsg inMsg = JsonMsg.parseFromJson(json);
-        Logger.info("id:=" + inMsg.getId());
+        Logger.info("devId:=" + inMsg.getId());
         Logger.info("content:=" + inMsg.getContent());
     }
 

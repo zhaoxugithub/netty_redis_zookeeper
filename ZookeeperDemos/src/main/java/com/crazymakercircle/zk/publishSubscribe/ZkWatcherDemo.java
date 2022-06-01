@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 public class ZkWatcherDemo {
 
     private String workerPath = "/test/listener/remoteNode";
-    private String subWorkerPath = "/test/listener/remoteNode/id-";
+    private String subWorkerPath = "/test/listener/remoteNode/devId-";
 
     @Test
     public void testWatcher() {

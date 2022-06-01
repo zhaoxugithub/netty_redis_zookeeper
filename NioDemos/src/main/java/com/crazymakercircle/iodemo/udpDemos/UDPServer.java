@@ -27,11 +27,16 @@ public class UDPServer {
         Logger.tcfo("UDP 服务器启动成功！");
         Selector selector = Selector.open();
         datagramChannel.register(selector, SelectionKey.OP_READ);
+
         while (selector.select() > 0) {
+
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+
             ByteBuffer buffer = ByteBuffer.allocate(NioDemoConfig.SEND_BUFFER_SIZE);
             while (iterator.hasNext()) {
+
                 SelectionKey selectionKey = iterator.next();
+
                 if (selectionKey.isReadable()) {
                     //操作二：读取DatagramChannel数据报通道数据
                     SocketAddress client = datagramChannel.receive(buffer);

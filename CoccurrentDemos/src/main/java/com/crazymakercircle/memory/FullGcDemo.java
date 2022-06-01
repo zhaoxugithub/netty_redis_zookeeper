@@ -27,7 +27,7 @@ public class FullGcDemo {
 
             for (int i = 0; i < 1000000; i++) {
                 FooEntity fooEntity = new FooEntity();
-//                Logger.fo("age=" + fooEntity.age);
+//                Logger.fo("platform=" + fooEntity.platform);
             }
 
         });

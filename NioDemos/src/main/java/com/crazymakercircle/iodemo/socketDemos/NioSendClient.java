@@ -66,10 +66,10 @@ public class NioSendClient {
 
             SocketChannel socketChannel = SocketChannel.open();
             socketChannel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+            socketChannel.configureBlocking(false);
             socketChannel.socket().connect(
                     new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP
                             , NioDemoConfig.SOCKET_SERVER_PORT));
-            socketChannel.configureBlocking(false);
 
             Logger.debug("Client 成功连接服务端");
 

@@ -46,7 +46,7 @@ public class UserServiceImplWithAnno implements UserService {
     /**
      * CRUD 之   查询
      *
-     * @param id id
+     * @param id devId
      * @return 用户
      */
     @Cacheable(key = USER_UID_PREFIX + "T(String).valueOf(#id)")
@@ -60,7 +60,7 @@ public class UserServiceImplWithAnno implements UserService {
     /**
      * CRUD 之 删除
      *
-     * @param id id
+     * @param id devId
      */
 
     @CacheEvict(key = USER_UID_PREFIX + "T(String).valueOf(#id)")

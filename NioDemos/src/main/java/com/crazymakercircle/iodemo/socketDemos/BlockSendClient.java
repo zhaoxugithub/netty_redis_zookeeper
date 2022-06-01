@@ -53,9 +53,12 @@ public class BlockSendClient extends Socket
             {
                 fis = new FileInputStream(file);
                 outputStream = new DataOutputStream(client.getOutputStream());
+
+                // 长度
+
                 outputStream.writeLong(file.length());
                 outputStream.flush();
-                // 文件名和长度
+                // 文件名
                 outputStream.writeUTF("copy_" + file.getName());
                 outputStream.flush();
 

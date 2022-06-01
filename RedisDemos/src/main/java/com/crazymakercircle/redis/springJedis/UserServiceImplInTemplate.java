@@ -64,7 +64,7 @@ public class UserServiceImplInTemplate implements UserService {
     /**
      * CRUD 之   查询
      *
-     * @param id id
+     * @param id devId
      * @return 用户
      */
     @Override
@@ -93,7 +93,7 @@ public class UserServiceImplInTemplate implements UserService {
 
     /**
      * CRUD 之 删除
-     * @param id id
+     * @param id devId
      */
     @Override
     public void deleteUser(long id) {
