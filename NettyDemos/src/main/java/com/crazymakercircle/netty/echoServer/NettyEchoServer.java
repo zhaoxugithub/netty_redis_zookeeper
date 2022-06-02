@@ -39,6 +39,7 @@ public class NettyEchoServer {
             //4 设置通道的参数
             b.option(ChannelOption.SO_KEEPALIVE, true);
             b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+
             b.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             b.childOption(ChannelOption.SO_KEEPALIVE, true);
 

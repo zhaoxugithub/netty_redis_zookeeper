@@ -2,16 +2,22 @@ package com.crazymakercircle.coccurent;
 
 import com.crazymakercircle.util.Logger;
 import com.google.common.util.concurrent.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.DefaultEventLoop;
+import io.netty.util.concurrent.DefaultEventExecutor;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by 尼恩 at 疯狂创客圈
  */
 
-public class GuavaFutureDemo {
+public class NettyFutureDemo {
 
     public static final int SLEEP_GAP = 5000;
 
@@ -120,44 +126,42 @@ public class GuavaFutureDemo {
         Callable<Boolean> washJob = new WashJob();
 
         //创建java 线程池
-        ExecutorService jPool =
-                Executors.newFixedThreadPool(10);
+        DefaultEventExecutorGroup npool =new DefaultEventExecutorGroup(2);
 
-        //包装java线程池，构造guava 线程池
-        ListeningExecutorService gPool =
-                MoreExecutors.listeningDecorator(jPool);
 
         //提交烧水的业务逻辑，取到异步任务
-        ListenableFuture<Boolean> hotFuture = gPool.submit(hotJob);
+        io.netty.util.concurrent.Future<Boolean> hotFuture = npool.next().submit(hotJob);
         //绑定任务执行完成后的回调，到异步任务
-        Futures.addCallback(hotFuture, new FutureCallback<Boolean>() {
-            public void onSuccess(Boolean r) {
-                if (r) {
-                    mainJob.waterOk = true;
-                    mainJob.drinkTea();
-                }
-            }
-
-            public void onFailure(Throwable t) {
-                Logger.info("烧水失败，没有茶喝了");
+        hotFuture.addListener( new GenericFutureListener(){
+            @Override
+            public void operationComplete(io.netty.util.concurrent.Future future) throws Exception {
+                    if (future.isSuccess()) {
+                        mainJob.waterOk = true;
+                        Logger.info("烧水 完成，尝试着去吃吃茶!");
+                        mainJob.drinkTea();
+                    } else {
+                        mainJob.waterOk = false;
+                        Logger.info("烧水 失败啦!");
+                    }
             }
         });
         //提交清洗的业务逻辑，取到异步任务
 
-        ListenableFuture<Boolean> washFuture = gPool.submit(washJob);
+        io.netty.util.concurrent.Future<Boolean> washFuture = npool.next().submit(washJob);
         //绑定任务执行完成后的回调，到异步任务
-        Futures.addCallback(washFuture, new FutureCallback<Boolean>() {
-            public void onSuccess(Boolean r) {
-                if (r) {
+
+        washFuture.addListener( new GenericFutureListener(){
+            @Override
+            public void operationComplete(io.netty.util.concurrent.Future future) throws Exception {
+                if (future.isSuccess()) {
                     mainJob.cupOk = true;
+                    Logger.info("杯子洗 完成，尝试着去吃吃茶!");
                     mainJob.drinkTea();
+                } else {
+                    mainJob.cupOk = false;
+                    Logger.info("杯子洗不了，没有茶喝了");
+
                 }
-
-
-            }
-
-            public void onFailure(Throwable t) {
-                Logger.info("杯子洗不了，没有茶喝了");
             }
         });
     }
