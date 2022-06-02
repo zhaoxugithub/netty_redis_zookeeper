@@ -10,6 +10,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.Scanner;
 
@@ -40,6 +42,7 @@ public class NettyEchoClient {
             b.remoteAddress(serverIp, serverPort);
             //4 设置通道的参数
             b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+            b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
 
             //5 装配通道流水线
             b.handler(new ChannelInitializer<SocketChannel>() {
@@ -50,6 +53,8 @@ public class NettyEchoClient {
                     ch.pipeline().addLast(NettyEchoClientHandler.INSTANCE);
                 }
             });
+
+
             ChannelFuture f = b.connect();
             f.addListener((ChannelFuture futureListener) ->
             {
@@ -63,11 +68,42 @@ public class NettyEchoClient {
             });
 
             // 阻塞,直到连接完成
-            f.sync();
+//            f.sync();
+
+            f.awaitUninterruptibly();
+
+
+            if (f.isCancelled()) {
+                Logger.tcfo("用户取消连接:");
+                return;
+                // Connection attempt cancelled by user
+            } else if (!f.isSuccess()) {
+                f.cause().printStackTrace();
+                return;
+            }
+
+//            else {
+//                // Connection established successfully
+//            }
             Channel channel = f.channel();
 
             Scanner scanner = new Scanner(System.in);
             Logger.tcfo("请输入发送内容:");
+
+
+            GenericFutureListener sendCallBack = new GenericFutureListener() {
+
+                @Override
+                public void operationComplete(Future future) throws Exception {
+                    if (future.isSuccess()) {
+                        Logger.info("发送成功!");
+
+                    } else {
+                        Logger.info("发送失败!");
+                    }
+                }
+            };
+
 
             while (scanner.hasNext()) {
                 //获取输入的内容
@@ -76,7 +112,8 @@ public class NettyEchoClient {
                 //发送ByteBuf
                 ByteBuf buffer = channel.alloc().buffer();
                 buffer.writeBytes(bytes);
-                channel.writeAndFlush(buffer);
+                ChannelFuture writeAndFlushFuture = channel.writeAndFlush(buffer);
+                writeAndFlushFuture.addListener(sendCallBack);
                 Logger.tcfo("请输入发送内容:");
 
             }

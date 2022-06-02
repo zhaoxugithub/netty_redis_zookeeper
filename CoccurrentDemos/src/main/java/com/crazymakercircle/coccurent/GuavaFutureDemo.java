@@ -81,9 +81,9 @@ public class GuavaFutureDemo {
         public void run() {
             while (true) {
                 try {
-                    Thread.sleep(gap);
                     Logger.info("读书中......");
-                } catch (InterruptedException e) {
+                    Thread.sleep(gap);
+                 } catch (InterruptedException e) {
                     Logger.info(getCurThreadName() + "发生异常被中断.");
                 }
 
@@ -94,9 +94,13 @@ public class GuavaFutureDemo {
 
         public void drinkTea() {
             if (waterOk && cupOk) {
+
                 Logger.info("泡茶喝，茶喝完");
+
                 this.waterOk = false;
+
                 this.gap = SLEEP_GAP * 100;
+
             } else if (!waterOk) {
                 Logger.info("烧水 没有完成，没有茶喝了");
             } else if (!cupOk ) {
@@ -111,7 +115,7 @@ public class GuavaFutureDemo {
         //新起一个线程，作为泡茶主线程
         MainJob mainJob = new MainJob();
         Thread mainThread = new Thread(mainJob);
-        mainThread.setName("主线程");
+        mainThread.setName("喝茶线程");
         mainThread.start();
 
         //烧水的业务逻辑
@@ -129,9 +133,12 @@ public class GuavaFutureDemo {
 
         //提交烧水的业务逻辑，取到异步任务
         ListenableFuture<Boolean> hotFuture = gPool.submit(hotJob);
+
         //绑定任务执行完成后的回调，到异步任务
         Futures.addCallback(hotFuture, new FutureCallback<Boolean>() {
             public void onSuccess(Boolean r) {
+                Logger.info("烧水成功，尝试喝茶");
+
                 if (r) {
                     mainJob.waterOk = true;
                     mainJob.drinkTea();
@@ -142,12 +149,15 @@ public class GuavaFutureDemo {
                 Logger.info("烧水失败，没有茶喝了");
             }
         });
+
+
         //提交清洗的业务逻辑，取到异步任务
 
         ListenableFuture<Boolean> washFuture = gPool.submit(washJob);
         //绑定任务执行完成后的回调，到异步任务
         Futures.addCallback(washFuture, new FutureCallback<Boolean>() {
             public void onSuccess(Boolean r) {
+                Logger.info("杯子洗  成功，尝试喝茶");
                 if (r) {
                     mainJob.cupOk = true;
                     mainJob.drinkTea();

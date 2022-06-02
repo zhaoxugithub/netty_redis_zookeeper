@@ -21,7 +21,7 @@ public class NettyPromiseDemo {
         return Thread.currentThread().getName();
     }
 
-    static class HotWaterJob implements Callable<Boolean> //①
+    static class HotWaterJob implements Runnable //①
     {
 
         private final Promise<Object> hotPromise;
@@ -31,26 +31,24 @@ public class NettyPromiseDemo {
         }
 
         @Override
-        public Boolean call() throws Exception //②
+        public void run()  //②
         {
 
             try {
-                Logger.info("洗好水壶");
+                Logger.info("开始烧水");
                 Logger.info("灌上凉水");
                 Logger.info("放在火上");
 
                 //线程睡眠一段时间，代表烧水中
                 Thread.sleep(SLEEP_GAP);
                 Logger.info("水开了");
+                hotPromise.trySuccess(true);
 
             } catch (InterruptedException e) {
                 Logger.info(" 发生异常被中断.");
                 hotPromise.trySuccess(false);
-                return false;
             }
             Logger.info(" 烧水工作，运行结束.");
-            hotPromise.trySuccess(true);
-            return true;
         }
     }
 
@@ -72,7 +70,7 @@ public class NettyPromiseDemo {
                 Logger.info("洗茶杯");
                 Logger.info("拿茶叶");
                 //线程睡眠一段时间，代表清洗中
-                Thread.sleep(SLEEP_GAP);
+                Thread.sleep(SLEEP_GAP/5);
                 Logger.info("洗完了");
 
             } catch (InterruptedException e) {
@@ -128,14 +126,15 @@ public class NettyPromiseDemo {
         //新起一个线程，作为泡茶主线程
         MainJob mainJob = new MainJob();
         Thread mainThread = new Thread(mainJob);
-        mainThread.setName("主线程");
+        mainThread.setName("喝茶线程");
         mainThread.start();
 
         //创建netty  线程池
         DefaultEventExecutorGroup npool = new DefaultEventExecutorGroup(2);
+
         Promise<Object> hotPromise = npool.next().newPromise();
         //烧水的业务逻辑
-        Callable<Boolean> hotJob = new HotWaterJob(hotPromise);
+        Runnable hotJob = new HotWaterJob(hotPromise);
 
 
         //绑定任务执行完成后的回调，到异步任务
@@ -178,7 +177,7 @@ public class NettyPromiseDemo {
 
 
         //提交烧水的业务逻辑，取到异步任务
-        io.netty.util.concurrent.Future<Boolean> hotFuture = npool.submit(hotJob);
+        io.netty.util.concurrent.Future hotFuture = npool.submit(hotJob);
         //提交清洗的业务逻辑，取到异步任务
 
         io.netty.util.concurrent.Future<Boolean> washFuture = npool.submit(washJob);
