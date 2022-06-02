@@ -45,6 +45,8 @@ public class JavaFutureDemo {
             return true;
         }
     }
+
+
     static class WashJob implements Callable<Boolean> {
         @Override
         public Boolean call() throws Exception {
@@ -69,31 +71,41 @@ public class JavaFutureDemo {
         if (waterOk && cupOk) {
             Logger.info("泡茶喝");
         } else if (!waterOk) {
+
             Logger.info("烧水失败，没有茶喝了");
+
         } else if (!cupOk) {
+
             Logger.info("杯子洗不了，没有茶喝了");
         }
 
     }
 
     public static void main(String args[]) {
+
         Callable<Boolean> hJob = new HotWaterJob();//③
-        FutureTask<Boolean> hTask =
-                new FutureTask<>(hJob);//④
+
+        FutureTask<Boolean> hTask = new FutureTask<>(hJob);//④
+
         Thread hotThread = new Thread(hTask, "** 烧水-Thread");//⑤
+
+        hotThread.start();
+
 
         Callable<Boolean> wJob = new WashJob();//③
         FutureTask<Boolean> wTask =
                 new FutureTask<>(wJob);//④
         Thread washThread = new Thread(wTask, "$$ 清洗-Thread");//⑤
-        hotThread.start();
+
+
         washThread.start();
         Thread.currentThread().setName("主线程");
 
         try {
 
-            boolean  waterOk = hTask.get();
             boolean  cupOk = wTask.get();
+
+            boolean  waterOk = hTask.get();
 
 //            hThread.join();
 //            washThread.join();

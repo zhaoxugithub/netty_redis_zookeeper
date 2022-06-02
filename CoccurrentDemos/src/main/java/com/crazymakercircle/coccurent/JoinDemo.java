@@ -9,7 +9,7 @@ import com.crazymakercircle.util.Logger;
 
 public class JoinDemo {
 
-    public static final int SLEEP_GAP = 500;
+    public static final int SLEEP_GAP = 5000;
 
 
     public static String getCurThreadName() {
@@ -56,7 +56,7 @@ public class JoinDemo {
                 Logger.info("洗茶杯");
                 Logger.info("拿茶叶");
                 //线程睡眠一段时间，代表清洗中
-                Thread.sleep(SLEEP_GAP);
+                Thread.sleep(SLEEP_GAP/5);
                 Logger.info("洗完了");
 
             } catch (InterruptedException e) {
@@ -72,16 +72,24 @@ public class JoinDemo {
 
         Thread hThread = new HotWaterThread();
         Thread wThread = new WashThread();
+        Thread.currentThread().setName("主线程");
 
         hThread.start();
         wThread.start();
         try {
-            // 合并烧水-线程
-            hThread.join();
-            // 合并清洗-线程
-            wThread.join();
 
-            Thread.currentThread().setName("主线程");
+
+            Logger.info("刷一会手机");
+
+            // 合并清洗-线程
+            wThread.join(20000);
+
+
+            // 合并烧水-线程
+            hThread.join(20000);
+
+
+
             Logger.info("泡茶喝");
 
         } catch (InterruptedException e) {
