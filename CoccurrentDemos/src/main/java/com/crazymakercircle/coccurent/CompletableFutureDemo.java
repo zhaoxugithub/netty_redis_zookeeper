@@ -29,7 +29,6 @@ public class CompletableFutureDemo {
                 CompletableFuture.supplyAsync(() ->
                 {
                     Logger.tcfo("烧开水  starting");
-                    Logger.tcfo("烧开水");
 
                     //线程睡眠一段时间，代表烧水中
                     sleepSeconds(SLEEP_GAP);
@@ -41,7 +40,7 @@ public class CompletableFutureDemo {
 
         // 任务 3：任务 1 和任务 2 完成后执行：泡茶
         CompletableFuture<String> drinkJob =
-                washJob.thenCombine(hotJob, (hotOk, washOK) ->
+                hotJob.thenCombine(washJob, (hotOk, washOK) ->
                 {
                     if (hotOk && washOK) {
                         Logger.tcfo("泡茶喝，茶喝完");
