@@ -51,7 +51,8 @@ public class NettyEchoServer {
                 protected void initChannel(SocketChannel ch) throws Exception {
                     // pipeline管理子通道channel中的Handler
                     // 向子channel流水线添加一个handler处理器
-                    ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+//                    ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+                    ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                     ch.pipeline().addLast(NettyEchoServerHandler.INSTANCE);
                 }
             });
