@@ -27,7 +27,7 @@ public class NettyDiscardServer {
     public void runServer() {
         //创建reactor 线程组
         EventLoopGroup bossLoopGroup = new NioEventLoopGroup(1);
-         EventLoopGroup workerLoopGroup = new NioEventLoopGroup();
+        EventLoopGroup workerLoopGroup = new NioEventLoopGroup();
 
         try {
             //1 设置reactor 线程组
@@ -53,11 +53,25 @@ public class NettyDiscardServer {
             });
             // 6 开始绑定server
             // 通过调用sync同步方法阻塞直到绑定成功
-            ChannelFuture channelFuture = b.bind().sync();
+            ChannelFuture channelFuture = b.bind();
+
+            channelFuture.addListener(l -> {
+
+                if (l.isSuccess())
+                    Logger.info(" 服务器端口绑定 正常: " +
+                            channelFuture.channel().localAddress());
+                else
+                    Logger.info(" 服务器端口绑定 失败: " +
+                            channelFuture.channel().localAddress());
+
+            });
+
+            channelFuture.sync();
+
             Logger.info(" 服务器启动成功，监听端口: " +
                     channelFuture.channel().localAddress());
 
-          // 7 等待通道关闭的异步任务结束
+            // 7 等待通道关闭的异步任务结束
             // 服务监听通道会一直等待通道关闭的异步任务结束
             ChannelFuture closeFuture = channelFuture.channel().closeFuture();
             closeFuture.sync();

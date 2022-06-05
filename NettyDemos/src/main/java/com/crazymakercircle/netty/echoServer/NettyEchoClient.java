@@ -10,6 +10,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -50,6 +52,7 @@ public class NettyEchoClient {
                 protected void initChannel(SocketChannel ch) throws Exception {
                     // pipeline管理子通道channel中的Handler
                     // 向子channel流水线添加一个handler处理器
+                    ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
                     ch.pipeline().addLast(NettyEchoClientHandler.INSTANCE);
                 }
             });
