@@ -9,6 +9,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -45,6 +46,7 @@ public class NettyEchoServer {
             b.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             b.childOption(ChannelOption.SO_KEEPALIVE, true);
 
+
             //5 装配子通道流水线
             b.childHandler(new ChannelInitializer<SocketChannel>() {
                 //有连接到达时会创建一个channel
@@ -58,8 +60,17 @@ public class NettyEchoServer {
             });
             // 6 开始绑定server
             // 通过调用sync同步方法阻塞直到绑定成功
-            ChannelFuture channelFuture = b.bind().sync();
-            Logger.info(" 服务器启动成功，监听端口: " +
+            ChannelFuture channelFuture = b.bind();
+            channelFuture.addListener((future)->{
+                if(future.isSuccess())
+                {
+                    Logger.info(" ========》反应器线程 回调 服务器启动成功，监听端口: " +
+                            channelFuture.channel().localAddress());
+
+                }
+            });
+//            channelFuture.sync();
+            Logger.info(" 调用线程执行的，服务器启动成功，监听端口: " +
                     channelFuture.channel().localAddress());
 
             // 7 等待通道关闭的异步任务结束

@@ -15,10 +15,10 @@ public class OutHandlerDemoTester {
 
     @Test
     public void testlifeCircle() {
-        final OutHandlerDemo handler = new OutHandlerDemo();
+        final OutHandlerDemo outHandler = new OutHandlerDemo();
         ChannelInitializer i = new ChannelInitializer<EmbeddedChannel>() {
             protected void initChannel(EmbeddedChannel ch) {
-                ch.pipeline().addLast(handler);
+                ch.pipeline().addLast(outHandler);
             }
         };
 
@@ -31,7 +31,9 @@ public class OutHandlerDemoTester {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(1);
 
+//        ChannelFuture f = channel.writeAndFlush(buf);
         ChannelFuture f = channel.pipeline().writeAndFlush(buf);
+
         f.addListener((future) -> {
             if (future.isSuccess()) {
                 System.out.println("write is finished");

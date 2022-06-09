@@ -53,38 +53,44 @@ public class NettyEchoClient {
                     // pipeline管理子通道channel中的Handler
                     // 向子channel流水线添加一个handler处理器
                     //                    ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
-                    ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+//                    ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
                     ch.pipeline().addLast(NettyEchoClientHandler.INSTANCE);
                 }
             });
+            ChannelFuture f = null;
 
+            boolean connected = false;
+            while (!connected) {
 
-            ChannelFuture f = b.connect();
-            f.addListener((ChannelFuture futureListener) ->
-            {
-                if (futureListener.isSuccess()) {
-                    Logger.info("EchoClient客户端连接成功!");
+                f = b.connect();
+                f.addListener((ChannelFuture futureListener) ->
+                {
+                    if (futureListener.isSuccess()) {
+                        Logger.info("EchoClient客户端连接成功!");
 
-                } else {
-                    Logger.info("EchoClient客户端连接失败!");
-                }
+                    } else {
+                        Logger.info("EchoClient客户端连接失败!");
+                    }
 
-            });
+                });
 
-            // 阻塞,直到连接完成
+                // 阻塞,直到连接完成
 //            f.sync();
 
-            f.awaitUninterruptibly();
+                f.awaitUninterruptibly();
 
 
-            if (f.isCancelled()) {
-                Logger.tcfo("用户取消连接:");
-                return;
-                // Connection attempt cancelled by user
-            } else if (!f.isSuccess()) {
-                f.cause().printStackTrace();
-                return;
+                if (f.isCancelled()) {
+                    Logger.tcfo("用户取消连接:");
+                    return;
+                    // Connection attempt cancelled by user
+                } else if (f.isSuccess()) {
+                    connected = true;
+
+                }
+
             }
+
 
 //            else {
 //                // Connection established successfully
