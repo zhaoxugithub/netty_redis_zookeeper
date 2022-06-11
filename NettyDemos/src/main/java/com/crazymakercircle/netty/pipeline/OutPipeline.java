@@ -18,7 +18,14 @@ public class OutPipeline {
         @Override
         public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
             Logger.info("出站处理器 A: 被回调" );
+
             super.write(ctx, msg, promise);
+        }
+
+        @Override
+        public void flush(ChannelHandlerContext ctx) throws Exception {
+            Logger.info("出站处理器 : 被回调" );
+            ctx.flush();
         }
     }
     public class SimpleOutHandlerB extends ChannelOutboundHandlerAdapter {
@@ -27,6 +34,13 @@ public class OutPipeline {
             Logger.info("出站处理器 B: 被回调" );
             super.write(ctx, msg, promise);
         }
+
+        @Override
+        public void flush(ChannelHandlerContext ctx) throws Exception {
+            Logger.info("出站处理器 : 被回调" );
+            ctx.flush();
+        }
+
     }
     public class SimpleOutHandlerC extends ChannelOutboundHandlerAdapter {
         @Override
@@ -34,7 +48,15 @@ public class OutPipeline {
             Logger.info("出站处理器 C: 被回调" );
             super.write(ctx, msg, promise);
         }
+
+        @Override
+        public void flush(ChannelHandlerContext ctx) throws Exception {
+            Logger.info("出站处理器 : 被回调" );
+            ctx.flush();
+        }
+
     }
+
     @Test
     public void testPipelineOutBound() {
         ChannelInitializer i = new ChannelInitializer<EmbeddedChannel>() {
@@ -48,7 +70,8 @@ public class OutPipeline {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(1);
         //向通道写一个出站报文
-        channel.writeOutbound(buf);
+//        channel.writeOutbound(buf);
+        channel.writeAndFlush(buf);
         try {
             Thread.sleep(Integer.MAX_VALUE);
         } catch (InterruptedException e) {
@@ -71,7 +94,7 @@ public class OutPipeline {
             protected void initChannel(EmbeddedChannel ch) {
                 ch.pipeline().addLast(new SimpleOutHandlerA());
                 ch.pipeline().addLast(new SimpleOutHandlerB2());
-                ch.pipeline().addLast(new SimpleOutHandlerC());
+                ch.pipeline().addLast("SimpleOutHandlerC",new SimpleOutHandlerC());
             }
         };
         EmbeddedChannel channel = new EmbeddedChannel(i);
@@ -79,6 +102,10 @@ public class OutPipeline {
         buf.writeInt(1);
         //向通道写一个出站报文
         channel.writeOutbound(buf);
+
+//        channel.writeAndFlush(buf);
+
+
         try {
             Thread.sleep(Integer.MAX_VALUE);
         } catch (InterruptedException e) {
@@ -86,6 +113,5 @@ public class OutPipeline {
         }
 
     }
-
 
 }

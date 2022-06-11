@@ -21,6 +21,8 @@ public class PipelineHotOperateTester {
             super.channelRead(ctx, msg);
             //从流水线删除当前Handler
             ctx.pipeline().remove(this);
+
+
         }
 
     }
