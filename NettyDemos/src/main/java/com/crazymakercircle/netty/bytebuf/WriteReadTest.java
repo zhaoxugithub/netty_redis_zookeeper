@@ -41,4 +41,29 @@ public class WriteReadTest {
         }
     }
 
+
+    @Test
+    public void testResize() {
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(10);
+        print("动作：分配 ByteBuf(4)", buffer);
+        Logger.info("start==========:写入4个字节==========");
+        buffer.writeBytes(new byte[]{1, 2, 3, 4});
+        print("动作：写入4个字节 ", buffer);
+        Logger.info("start==========:写入10个字节==========");
+        buffer.writeBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+        print("动作：写入10个字节 ", buffer);
+
+        Logger.info("start==========:写入64个字节==========");
+        for (int i = 0; i < 64; i++) {
+            buffer.writeByte(1);
+        }
+        print("动作：写入64个字节 ", buffer);
+        Logger.info("start==========:写入128个字节==========");
+        for (int i = 0; i < 128; i++) {
+            buffer.writeByte(1);
+        }
+        print("动作：写入128个字节 ", buffer);
+
+    }
+
 }
