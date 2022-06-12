@@ -17,6 +17,7 @@ public class WriteReadTest {
         ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
         print("动作：分配 ByteBuf(9, 100)", buffer);
         buffer.writeBytes(new byte[]{1, 2, 3, 4});
+
         print("动作：写入4个字节 (1,2,3,4)", buffer);
         Logger.info("start==========:get==========");
         getByteBuf(buffer);
@@ -38,6 +39,7 @@ public class WriteReadTest {
     private void getByteBuf(ByteBuf buffer) {
         for (int i = 0; i < buffer.readableBytes(); i++) {
             Logger.info("读取一个字节:" + buffer.getByte(i));
+
         }
     }
 
