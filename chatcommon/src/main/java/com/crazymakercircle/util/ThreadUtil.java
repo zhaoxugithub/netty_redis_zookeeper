@@ -21,6 +21,11 @@ public class ThreadUtil {
      **/
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 
+    public static void sleepForEver() {
+
+        sleepSeconds(Integer.MAX_VALUE);
+    }
+
     /**
      * 定制的线程工厂
      */

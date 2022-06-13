@@ -4,6 +4,7 @@ import com.crazymakercircle.netty.NettyDemoConfig;
 import com.crazymakercircle.util.Logger;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -41,7 +42,8 @@ public class NettyEchoServer {
             b.localAddress(serverPort);
             //4 设置通道的参数
             b.option(ChannelOption.SO_KEEPALIVE, true);
-            b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+//            b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+            b.option(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT);
 
             b.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             b.childOption(ChannelOption.SO_KEEPALIVE, true);
