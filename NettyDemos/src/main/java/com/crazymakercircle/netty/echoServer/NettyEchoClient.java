@@ -129,7 +129,7 @@ public class NettyEchoClient {
 //                channel.write(buffer);
 //                buffer.retain();
 
-                ChannelFuture writeAndFlushFuture = channel.writeAndFlush(buffer);
+                 ChannelFuture writeAndFlushFuture = channel.writeAndFlush(buffer);
                 writeAndFlushFuture.addListener(sendCallBack);
                 Logger.tcfo("请输入发送内容:");
 
