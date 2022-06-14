@@ -15,13 +15,17 @@ public class NettyDiscardHandler extends ChannelInboundHandlerAdapter {
 
         ByteBuf in = (ByteBuf) msg;
         try {
+
             Logger.info("收到消息,丢弃如下:");
             while (in.isReadable()) {
                 System.out.print((char) in.readByte());
             }
             System.out.println();
+
         } finally {
             ReferenceCountUtil.release(msg);
         }
+
+//        ctx.fireChannelRead(msg);
     }
 }

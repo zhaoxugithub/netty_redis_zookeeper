@@ -122,6 +122,13 @@ public class NettyEchoClient {
                 //发送ByteBuf
                 ByteBuf buffer = channel.alloc().buffer();
                 buffer.writeBytes(bytes);
+//
+//                channel.write(buffer);
+//                buffer.retain();
+//
+//                channel.write(buffer);
+//                buffer.retain();
+
                 ChannelFuture writeAndFlushFuture = channel.writeAndFlush(buffer);
                 writeAndFlushFuture.addListener(sendCallBack);
                 Logger.tcfo("请输入发送内容:");
