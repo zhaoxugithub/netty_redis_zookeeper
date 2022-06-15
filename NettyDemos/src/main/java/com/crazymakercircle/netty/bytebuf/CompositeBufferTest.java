@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 
 import static com.crazymakercircle.netty.bytebuf.PrintAttribute.print;
 
@@ -20,6 +21,8 @@ public class CompositeBufferTest {
         compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{1, 2, 3}));
         compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{4}));
         compositeByteBuf.addComponent(Unpooled.wrappedBuffer(new byte[]{5, 6}));
+
+
 
         print("动作：addComponent ", compositeByteBuf);
         showMsg(compositeByteBuf);
@@ -40,12 +43,23 @@ public class CompositeBufferTest {
 
     @Test
     public void byteBufComposite() {
-        CompositeByteBuf compositeByteBuf = ByteBufAllocator.DEFAULT.compositeBuffer();
         //消息头
         ByteBuf headerBuf = Unpooled.wrappedBuffer(utf8("疯狂创客圈:"));
         //消息体1
         ByteBuf bodyBuf = Unpooled.wrappedBuffer(utf8("高性能 Netty"));
-        compositeByteBuf.addComponents(headerBuf, bodyBuf);
+
+
+        //深层次复制
+
+        ByteBuf dstBuf= ByteBufAllocator.DEFAULT.buffer();
+        dstBuf.writeBytes(headerBuf.slice());
+        dstBuf.writeBytes(bodyBuf.slice());
+        print("动作：dstBuf ", dstBuf);
+        showMsg(dstBuf);
+
+        //零复制
+        CompositeByteBuf compositeByteBuf = ByteBufAllocator.DEFAULT.compositeBuffer();
+        compositeByteBuf.addComponents(headerBuf.slice(), bodyBuf.slice());
         print("动作：addComponent 1", compositeByteBuf);
         showMsg(compositeByteBuf);
 
@@ -57,8 +71,8 @@ public class CompositeBufferTest {
         compositeByteBuf = Unpooled.compositeBuffer(2);
 
         //消息体2
-        bodyBuf = Unpooled.wrappedBuffer(utf8("高性能学习社群"));
-        compositeByteBuf.addComponents(headerBuf, bodyBuf);
+        bodyBuf = Unpooled.wrappedBuffer(utf8("高性能学习社群, 卷王 社群"));
+        compositeByteBuf.addComponents(headerBuf.slice(), bodyBuf.slice());
 
 
         print("动作：addComponent 2", compositeByteBuf);
@@ -76,7 +90,7 @@ public class CompositeBufferTest {
         return s.getBytes(utf8Code);
     }
 
-    private void showMsg(CompositeByteBuf b) {
+    private void showMsg(ByteBuf b) {
         System.out.println(" showMsg ..........");
                 //处理整个消息
         int length = b.readableBytes();
@@ -91,8 +105,22 @@ public class CompositeBufferTest {
 
     private void iterateMsg(CompositeByteBuf cbuf) {
         System.out.println(" iterateMsg .......... ");
+
+        Iterator<ByteBuf> it = cbuf.iterator();
+        while (it.hasNext()) {
+            ByteBuf b = it.next();
+            int length = b.readableBytes();
+            byte[] array = new byte[length];
+            //将CompositeByteBuf中的数据复制到数组中
+            b.getBytes(b.readerIndex(), array);
+            //处理一下数组中的数据
+            System.out.print(new String(array, utf8Code));
+        }
+
+        System.out.println();
+
         //处理整个消息
-        for (ByteBuf b : cbuf) {
+        for (ByteBuf b : cbuf) { // for in
             int length = b.readableBytes();
             byte[] array = new byte[length];
             //将CompositeByteBuf中的数据复制到数组中
@@ -103,4 +131,41 @@ public class CompositeBufferTest {
         System.out.println();
     }
 
+
+    @Test
+    public void byteBufWrapper() {
+        //消息头
+        ByteBuf headerBuf = Unpooled.wrappedBuffer(utf8("疯狂创客圈:"));
+        //消息体1
+        ByteBuf bodyBuf = Unpooled.wrappedBuffer(utf8("高性能 Netty"));
+
+
+       print("动作：headerBuf ", headerBuf);
+        showMsg(headerBuf);
+
+        //零复制
+        ByteBuf wrappedBuffer = Unpooled.wrappedBuffer(headerBuf.slice(), bodyBuf.slice());
+        print("动作：addComponent 1", wrappedBuffer);
+
+
+        showMsg(wrappedBuffer);
+        iterateMsg((CompositeByteBuf) wrappedBuffer);
+
+
+        headerBuf.retain();
+        wrappedBuffer.release();
+
+
+        //消息体2
+        bodyBuf = Unpooled.wrappedBuffer(utf8("高性能学习社群, 卷王 社群"));
+        wrappedBuffer = Unpooled.wrappedBuffer(headerBuf.slice(), bodyBuf.slice());
+
+
+        print("动作：addComponent 2", wrappedBuffer);
+
+        showMsg(wrappedBuffer);
+
+        iterateMsg((CompositeByteBuf) wrappedBuffer);
+        wrappedBuffer.release();
+    }
 }
