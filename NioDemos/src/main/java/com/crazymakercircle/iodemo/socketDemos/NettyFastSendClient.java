@@ -1,4 +1,4 @@
-package com.crazymakercircle.iodemo.zeroCopy;
+package com.crazymakercircle.iodemo.socketDemos;
 
 import com.crazymakercircle.NioDemoConfig;
 import com.crazymakercircle.util.IOUtil;
@@ -25,13 +25,13 @@ import static com.crazymakercircle.util.ByteUtil.utf8;
 /**
  * create by 尼恩 @ 疯狂创客圈
  **/
-public class BigFileNettyFastSendClient {
+public class NettyFastSendClient {
 
     private int serverPort;
     private String serverIp;
     Bootstrap b = new Bootstrap();
 
-    public BigFileNettyFastSendClient(String ip, int port) {
+    public NettyFastSendClient(String ip, int port) {
         this.serverPort = port;
         this.serverIp = ip;
     }
@@ -58,7 +58,7 @@ public class BigFileNettyFastSendClient {
             RandomAccessFile raf = null;
             long length = -1;
             try {
-                raf = new RandomAccessFile(srcPath, "r");
+                raf = new RandomAccessFile(file, "r");
                 length = raf.length();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -68,24 +68,32 @@ public class BigFileNettyFastSendClient {
             } finally {
                 if (length < 0 && raf != null) {
                     raf.close();
+                    ctx.channel().close();
                 }
             }
 
             ByteBuf outBuf = ctx.alloc().buffer();
+
             outBuf.writeInt(fileNameBytes.length);
+
             outBuf.writeBytes(fileNameBytes);
+
             outBuf.writeInt((int) length);
+
             ctx.writeAndFlush(outBuf);
 
-            Logger.info("文件长度："+length);
-            ChannelFuture future =null;
+            Logger.info("文件长度：" + length);
+            ChannelFuture future = null;
 
             if (ctx.pipeline().get(SslHandler.class) == null) {
+
+                DefaultFileRegion fileRegion = new DefaultFileRegion(raf.getChannel(), 0, length);
                 // 传输文件使用了 DefaultFileRegion 进行写入到 NioSocketChannel 中
-                future=  ctx.write(new DefaultFileRegion(raf.getChannel(), 0, length));
+                future = ctx.write(fileRegion);
+
             } else {
                 // SSL enabled - cannot use zero-copy file transfer.
-                future=  ctx.write(new ChunkedFile(raf));
+                future = ctx.write(new ChunkedFile(raf));
             }
             future.addListener(f -> {
 
@@ -98,8 +106,6 @@ public class BigFileNettyFastSendClient {
 
         }
     }
-
-
 
 
     public void runClient() {
@@ -163,6 +169,6 @@ public class BigFileNettyFastSendClient {
     public static void main(String[] args) throws InterruptedException {
         int port = NioDemoConfig.SOCKET_SERVER_PORT;
         String ip = NioDemoConfig.SOCKET_SERVER_IP;
-        new BigFileNettyFastSendClient(ip, port).runClient();
+        new NettyFastSendClient(ip, port).runClient();
     }
 }
