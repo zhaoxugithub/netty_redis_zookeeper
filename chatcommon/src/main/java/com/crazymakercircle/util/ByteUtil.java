@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * byte数组工具类实现byte[]与文件之间的相互转换
@@ -20,7 +21,11 @@ public class ByteUtil
     private static final char[] HEX_CHAR =
             {'0', '1', '2', '3', '4', '5', '6',
                     '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    public  static Charset utf8Code = Charset.forName("UTF-8");
 
+    public static byte[] utf8(String s) {
+        return s.getBytes(utf8Code);
+    }
     /**
      * 字节数据转十六进制字符串
      *

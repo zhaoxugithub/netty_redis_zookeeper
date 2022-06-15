@@ -47,12 +47,13 @@ public class BigFileNioFastSendClient {
 
 
             //发送小文件
-//            String srcPath = NioDemoConfig.SOCKET_SEND_FILE;
+            String srcPath = NioDemoConfig.SOCKET_SEND_FILE;
             //发送一个大的
-            String srcPath = NioDemoConfig.SOCKET_SEND_BIG_FILE;
+//            String srcPath = NioDemoConfig.SOCKET_SEND_BIG_FILE;
             File file = new File(srcPath);
             if (!file.exists()) {
                 srcPath = IOUtil.getResourcePath(srcPath);
+                file = new File(srcPath);
                 Logger.debug("srcPath=" + srcPath);
                 if (!file.exists()) {
                     Logger.debug("文件不存在");

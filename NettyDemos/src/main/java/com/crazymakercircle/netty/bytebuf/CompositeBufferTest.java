@@ -11,6 +11,8 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import static com.crazymakercircle.netty.bytebuf.PrintAttribute.print;
+import static com.crazymakercircle.util.ByteUtil.utf8;
+import static com.crazymakercircle.util.ByteUtil.utf8Code;
 
 
 public class CompositeBufferTest {
@@ -84,11 +86,7 @@ public class CompositeBufferTest {
         compositeByteBuf.release();
     }
 
-    static Charset utf8Code = Charset.forName("UTF-8");
 
-    private byte[] utf8(String s) {
-        return s.getBytes(utf8Code);
-    }
 
     private void showMsg(ByteBuf b) {
         System.out.println(" showMsg ..........");
