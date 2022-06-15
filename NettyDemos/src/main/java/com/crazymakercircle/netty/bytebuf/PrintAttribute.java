@@ -2,6 +2,7 @@ package com.crazymakercircle.netty.bytebuf;
 
 import com.crazymakercircle.util.Logger;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 
 /**
  * create by 尼恩 @ 疯狂创客圈
@@ -10,6 +11,7 @@ public class PrintAttribute {
 
     public static void print(String action, ByteBuf b) {
         Logger.info("after ===========" + action + "============");
+        Logger.info(b);
         Logger.info("1.0 isReadable(): " + b.isReadable());
         Logger.info("1.1 readerIndex(): " + b.readerIndex());
         Logger.info("1.2 readableBytes(): " + b.readableBytes());
@@ -21,5 +23,8 @@ public class PrintAttribute {
         Logger.info("3.0 capacity(): " + b.capacity());
         Logger.info("3.1 maxCapacity(): " + b.maxCapacity());
         Logger.info("3.2 maxWritableBytes(): " + b.maxWritableBytes());
+
+        Logger.info("4.0 refCnt(): " + b.refCnt());
+        Logger.info(ByteBufUtil.prettyHexDump(b));
     }
 }
