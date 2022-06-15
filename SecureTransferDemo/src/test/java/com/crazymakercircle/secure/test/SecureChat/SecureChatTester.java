@@ -3,7 +3,6 @@ package com.crazymakercircle.secure.test.SecureChat;
 import com.crazymakercircle.config.SystemConfig;
 import com.crazymakercircle.secure.netty.securechat.SecureChatClient;
 import com.crazymakercircle.secure.netty.securechat.SecureChatServer;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 /**
  * 基于Netty的简单安全聊天器，测试用例

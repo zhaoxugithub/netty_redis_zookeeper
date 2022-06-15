@@ -1,8 +1,6 @@
 package com.crazymakercircle.zk.NameService;
 
-import com.crazymakercircle.util.JsonUtil;
 import com.crazymakercircle.zk.ZKclient;
-import com.google.gson.annotations.Expose;
 import lombok.Data;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;

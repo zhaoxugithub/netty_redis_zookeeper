@@ -1,6 +1,5 @@
 package com.crazymakercircle.memory;
 
-import com.crazymakercircle.util.Logger;
 import com.crazymakercircle.util.ThreadUtil;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;

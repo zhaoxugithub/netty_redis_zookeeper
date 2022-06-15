@@ -1,5 +1,8 @@
 package com.crazymakercircle.iodemo.sharemem;
 
+import com.crazymakercircle.NioDemoConfig;
+import com.crazymakercircle.util.IOUtil;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -7,9 +10,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.Properties;
-
-import com.crazymakercircle.NioDemoConfig;
-import com.crazymakercircle.util.IOUtil;
 
 
 /**

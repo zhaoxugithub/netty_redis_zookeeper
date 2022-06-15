@@ -3,34 +3,6 @@ package com.crazymakercircle.iodemo.zeroCopy;
 import com.crazymakercircle.NioDemoConfig;
 import com.crazymakercircle.util.IOUtil;
 import com.crazymakercircle.util.Logger;
-import com.crazymakercircle.util.ThreadUtil;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
-
-import java.io.File;
-import java.io.RandomAccessFile;
-import java.net.InetSocketAddress;
-import java.net.StandardSocketOptions;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
-
-import static com.crazymakercircle.config.Constants.BIG_BUFFER_SIZE;
-import static com.crazymakercircle.util.ByteUtil.utf8;
-
-
-/**
- * 文件传输Client端
- * Created by 尼恩@ 疯创客圈
- */
-
-
-import com.crazymakercircle.util.Logger;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -40,7 +12,15 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
 
-import java.nio.charset.Charset;
+import java.io.File;
+import java.io.RandomAccessFile;
+
+import static com.crazymakercircle.util.ByteUtil.utf8;
+
+/**
+ * 文件传输Client端
+ * Created by 尼恩@ 疯创客圈
+ */
 
 /**
  * create by 尼恩 @ 疯狂创客圈

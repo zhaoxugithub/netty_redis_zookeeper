@@ -7,7 +7,6 @@ import io.netty.buffer.Unpooled;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import static com.crazymakercircle.netty.bytebuf.PrintAttribute.print;

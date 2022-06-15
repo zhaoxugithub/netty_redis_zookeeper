@@ -2,8 +2,6 @@ package com.crazymakercircle.iodemo.zeroCopy;
 
 import com.crazymakercircle.util.Logger;
 import com.crazymakercircle.util.ThreadUtil;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import org.junit.Test;
 
 import java.lang.ref.*;

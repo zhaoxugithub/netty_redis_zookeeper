@@ -1,9 +1,8 @@
 package com.crazymakercircle.mbeanDemo;
- 
-import java.lang.management.ManagementFactory;
- 
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
  
 /**
  * JMX App Demo

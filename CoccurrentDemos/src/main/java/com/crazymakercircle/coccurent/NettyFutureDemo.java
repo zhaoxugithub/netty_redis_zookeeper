@@ -1,17 +1,10 @@
 package com.crazymakercircle.coccurent;
 
 import com.crazymakercircle.util.Logger;
-import com.google.common.util.concurrent.*;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.DefaultEventLoop;
-import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by 尼恩 at 疯狂创客圈

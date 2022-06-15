@@ -6,12 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import sun.misc.BASE64Encoder;
 import sun.security.provider.X509Factory;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.KeyStore;
 import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
@@ -21,11 +16,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.crazymakercircle.util.IOUtil.closeQuietly;
 import static com.crazymakercircle.util.IOUtil.readInputStream;

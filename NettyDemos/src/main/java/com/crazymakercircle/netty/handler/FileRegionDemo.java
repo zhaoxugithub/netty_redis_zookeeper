@@ -1,6 +1,5 @@
 package com.crazymakercircle.netty.handler;
 
-import com.crazymakercircle.util.Logger;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.DefaultFileRegion;

@@ -1,6 +1,5 @@
 package com.crazymakercircle.mbeanDemo;
 
-import com.crazymakercircle.mbeanDemo.EchoMBean;
 import com.crazymakercircle.util.Logger;
 
 /*

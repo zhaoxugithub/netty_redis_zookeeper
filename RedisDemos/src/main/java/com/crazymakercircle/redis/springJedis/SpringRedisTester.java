@@ -2,14 +2,9 @@ package com.crazymakercircle.redis.springJedis;
 
 import com.crazymakercircle.im.common.bean.User;
 import com.crazymakercircle.util.Logger;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
  * create by 尼恩 @ 疯狂创客圈

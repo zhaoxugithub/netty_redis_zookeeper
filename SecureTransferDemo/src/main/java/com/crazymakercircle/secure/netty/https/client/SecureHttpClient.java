@@ -3,11 +3,7 @@ package com.crazymakercircle.secure.netty.https.client;
 import com.crazymakercircle.config.SystemConfig;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.*;
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;

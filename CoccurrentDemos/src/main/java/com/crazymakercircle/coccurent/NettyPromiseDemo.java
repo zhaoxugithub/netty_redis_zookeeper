@@ -1,7 +1,6 @@
 package com.crazymakercircle.coccurent;
 
 import com.crazymakercircle.util.Logger;
-import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
