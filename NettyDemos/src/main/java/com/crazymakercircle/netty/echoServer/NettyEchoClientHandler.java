@@ -21,5 +21,7 @@ public class NettyEchoClientHandler extends ChannelInboundHandlerAdapter {
         in.getBytes(0, arr);
         Logger.info("client received: " + new String(arr, "UTF-8"));
         in.release();
+
+//        ctx.fireChannelRead(in);
     }
 }

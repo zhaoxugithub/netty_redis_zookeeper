@@ -40,7 +40,7 @@ public class NettyEchoServer {
             //3 设置监听端口
             b.localAddress(serverPort);
             //4 设置通道的参数
-            b.option(ChannelOption.SO_KEEPALIVE, true);
+//            b.option(ChannelOption.SO_KEEPALIVE, true);
 //            b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             b.option(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT);
 
