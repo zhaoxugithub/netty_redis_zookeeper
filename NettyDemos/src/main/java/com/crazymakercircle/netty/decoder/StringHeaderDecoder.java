@@ -25,6 +25,8 @@ public class StringHeaderDecoder extends ByteToMessageDecoder {    //头是一�
         //在真正开始从buffer读取数据之前，调用markReaderIndex()设置回滚点
         // 回滚点为 header的readIndex位置
         buf.markReaderIndex();
+        //checkpoint
+
         int length = buf.readInt();
         //从buffer中读出头的大小，这会使得readIndex前移
         //剩余长度不够body体，reset 读指针

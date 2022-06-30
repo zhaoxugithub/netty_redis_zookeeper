@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * create by 尼恩 @ 疯狂创客圈
  **/
-public class IntegerAddDecoder
-        extends ReplayingDecoder<IntegerAddDecoder.Status> {
+public class IntegerAddDecoder        extends ReplayingDecoder<IntegerAddDecoder.Status> {
 
     enum Status {
         PARSE_1, PARSE_2

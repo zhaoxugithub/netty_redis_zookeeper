@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
  * create by 尼恩 @ 疯狂创客圈
  **/
 public class StringReplayDecoderTester {
+
     static String content = "疯狂创客圈：高性能学习社群!";
 
     /**
@@ -27,15 +28,22 @@ public class StringReplayDecoderTester {
             }
         };
         EmbeddedChannel channel = new EmbeddedChannel(i);
+
         byte[] bytes = content.getBytes(Charset.forName("utf-8"));
+
         for (int j = 0; j < 100; j++) {
             //1-3之间的随机数
             int random = RandomUtil.randInMod(3);
             ByteBuf buf = Unpooled.buffer();
+
+            //在bytebuf 首先放入 长度
             buf.writeInt(bytes.length * random);
+
+            //在bytebuf 放入 内容
             for (int k = 0; k < random; k++) {
                 buf.writeBytes(bytes);
             }
+
             channel.writeInbound(buf);
         }
         try {

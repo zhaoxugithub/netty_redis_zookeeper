@@ -123,7 +123,7 @@
 
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
+            <artifactId>netty-pojo</artifactId>
             <version>${netty.version}</version>
         </dependency>
 

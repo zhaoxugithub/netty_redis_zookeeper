@@ -12,13 +12,14 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 public class Byte2IntegerDecoder extends ByteToMessageDecoder {
+
+    //钩子实现
     @Override
-    public void decode(ChannelHandlerContext ctx, ByteBuf in,
-                       List<Object> out) {
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         while (in.readableBytes() >= 4) {
-            int i = in.readInt();
-            Logger.info("解码出一个整数: " + i);
-            out.add(i);
+            Integer anInt = in.readInt();
+            Logger.info("解码出一个整数: " + anInt);
+            out.add(anInt);
         }
     }
 }
