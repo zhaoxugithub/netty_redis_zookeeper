@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class Client7000 {
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
+
         for (int i = 0; i < 70000; i++) {
 
             Socket socket = new Socket("localhost", NioDemoConfig.SOCKET_SERVER_PORT);

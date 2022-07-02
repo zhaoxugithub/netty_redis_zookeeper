@@ -7,15 +7,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
+//服务端
 class ConnectionPerThread implements Runnable {
     public void run() {
         try {
             ServerSocket serverSocket =
                     new ServerSocket(NioDemoConfig.SOCKET_SERVER_PORT);
             Logger.info(" server is up");
+
             while (!Thread.interrupted()) {
+               //每接收一个客户端的socket连接， 创建一个线程， 进行阻塞式的读写
                 Socket socket = serverSocket.accept();
+
                 Handler handler = new Handler(socket);
                 //创建新线程来handle
                 //或者，使用线程池来处理
@@ -31,7 +34,7 @@ class ConnectionPerThread implements Runnable {
         Handler(Socket s) {
             socket = s;
 
-            Logger.info("连接的两个端口:",socket.getPort(),socket.getLocalPort());
+            Logger.info("连接的两个端口:",socket.getPort(),  socket.getLocalPort());
 
         }
 
