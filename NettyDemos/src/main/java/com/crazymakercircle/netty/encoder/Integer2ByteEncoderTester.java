@@ -23,15 +23,19 @@ public class Integer2ByteEncoderTester {
         EmbeddedChannel channel = new EmbeddedChannel(i);
 
         for (int j = 0; j < 100; j++) {
-            channel.write(j);
+            channel.writeAndFlush(j);
         }
+
         channel.flush();
 
         //取得通道的出站数据帧
-        ByteBuf buf = (ByteBuf) channel.readOutbound();
+        ByteBuf buf = channel.readOutbound();
+
         while (null != buf) {
+
             System.out.println("o = " + buf.readInt());
-            buf = (ByteBuf) channel.readOutbound();
+
+            buf = channel.readOutbound();
         }
         try {
             Thread.sleep(Integer.MAX_VALUE);

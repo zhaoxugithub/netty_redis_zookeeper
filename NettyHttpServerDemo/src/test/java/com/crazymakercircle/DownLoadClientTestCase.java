@@ -1,5 +1,7 @@
-package com.crazymakercircle.netty.http.fileserver.segmentdown;
+package com.crazymakercircle;
 
+import com.crazymakercircle.netty.http.fileserver.segmentdown.DownLoadTask;
+import com.crazymakercircle.netty.http.fileserver.segmentdown.MultiShardDownloader;
 import org.junit.Test;
 
 /**

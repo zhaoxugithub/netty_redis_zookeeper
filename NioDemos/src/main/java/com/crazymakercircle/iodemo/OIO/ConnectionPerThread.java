@@ -13,6 +13,7 @@ class ConnectionPerThread implements Runnable {
         try {
             ServerSocket serverSocket =
                     new ServerSocket(NioDemoConfig.SOCKET_SERVER_PORT);
+            Logger.info(" server is up");
             while (!Thread.interrupted()) {
                 Socket socket = serverSocket.accept();
                 Handler handler = new Handler(socket);
@@ -29,6 +30,9 @@ class ConnectionPerThread implements Runnable {
 
         Handler(Socket s) {
             socket = s;
+
+            Logger.info("连接的两个端口:",socket.getPort(),socket.getLocalPort());
+
         }
 
         public void run() {
