@@ -9,13 +9,16 @@ import lombok.Data;
  **/
 @Data
 public class JsonMsg {
+
     //devId Field(域)
     private int id;
     //content Field(域)
     private String content = "疯狂创客圈-Java高并发社群";
 
     //在通用方法中，使用阿里FastJson转成Java对象
+
     public static JsonMsg parseFromJson(String json) {
+
         return JsonUtil.jsonToPojo(json, JsonMsg.class);
     }
 
