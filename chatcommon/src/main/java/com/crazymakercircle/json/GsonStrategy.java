@@ -16,7 +16,8 @@ public class GsonStrategy implements JsonStrategy {
 
     public GsonStrategy() {
         gsonBuilder = new GsonBuilder();
-
+        //不需要html escape
+        gsonBuilder.disableHtmlEscaping();
         gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer()).setDateFormat(DateFormat.LONG);
         gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializers.DateDeserializer()).setDateFormat(DateFormat.LONG);
 

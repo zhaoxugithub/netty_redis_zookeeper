@@ -12,25 +12,7 @@ import java.util.Map;
 
 public class JsonUtil
 {
-    public static final TypeReference<JSONObject> JSONOBJECT_TYPE = new TypeReference<JSONObject>()
-    {
-    };
-    public static final TypeReference<Map<String, Object>> MAP_OBJECT_TYPE = new TypeReference<Map<String, Object>>()
-    {
-    };
 
-    //谷歌 Gson
-    static Gson gson = null;
-
-    static
-    {
-        //不需要html escape
-        gson = new GsonBuilder()
-                .disableHtmlEscaping()
-//                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-
-    }
 
     //Object对象转成JSON字符串后，进一步转成字节数组
     public static byte[] object2JsonBytes(Object obj)
@@ -86,12 +68,5 @@ public class JsonUtil
         return t;
     }
 
-    //使用阿里 Fastjson 将字符串转成 POJO对象
-    public static <T> T jsonToPojo(String json, TypeReference<T> type)
-    {
-        T t = JSON.parseObject(json, type);
-        return t;
-    }
-
-
+   
 }
