@@ -9,12 +9,12 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.*;
 
-public class GsonMapper extends AbstractJsonMapper {
+public class GsonStrategy implements JsonStrategy {
     public static Gson gson;
     public static GsonBuilder gsonBuilder;
 
 
-    public GsonMapper() {
+    public GsonStrategy() {
         gsonBuilder = new GsonBuilder();
 
         gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer()).setDateFormat(DateFormat.LONG);
@@ -83,18 +83,18 @@ public class GsonMapper extends AbstractJsonMapper {
     }
 
     @Override
-    public String toJsonString(Object object) {
+    public String toJson(Object object) {
         return gson.toJson(object);
     }
 
     @Override
-    public String toJsonString(Object object, String dateFormatPattern) {
+    public String toJson(Object object, String dateFormatPattern) {
         gson = gsonBuilder.setDateFormat(dateFormatPattern).create();
         return gson.toJson(object);
     }
 
     @Override
-    public <T> T toObject(String json, Class<T> valueType) {
+    public <T> T fromJson(String json, Class<T> valueType) {
         return gson.fromJson(json, valueType);
     }
 
@@ -109,6 +109,6 @@ public class GsonMapper extends AbstractJsonMapper {
     @Override
     public <T> T mapToObject(Map fromMap, Class<T> toValueType) {
         String json = gson.toJson(fromMap);
-        return toObject(json, toValueType);
+        return fromJson(json, toValueType);
     }
 }

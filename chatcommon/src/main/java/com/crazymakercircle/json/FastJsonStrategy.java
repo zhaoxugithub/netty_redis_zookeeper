@@ -8,9 +8,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-public class FastJsonMapper extends AbstractJsonMapper {
+public class FastJsonStrategy implements JsonStrategy {
 
-    public FastJsonMapper() {
+    public FastJsonStrategy() {
     }
 
     @Override
@@ -46,17 +46,17 @@ public class FastJsonMapper extends AbstractJsonMapper {
     }
 
     @Override
-    public String toJsonString(Object object) {
+    public String toJson(Object object) {
         return JSON.toJSONString(object);
     }
 
     @Override
-    public String toJsonString(Object object, String dateFormatPattern) {
+    public String toJson(Object object, String dateFormatPattern) {
         return JSON.toJSONStringWithDateFormat(object, dateFormatPattern, SerializerFeature.WriteDateUseDateFormat);
     }
 
     @Override
-    public <T> T toObject(String json, Class<T> valueType) {
+    public <T> T fromJson(String json, Class<T> valueType) {
         return JSON.parseObject(json, valueType);
     }
 
@@ -69,6 +69,6 @@ public class FastJsonMapper extends AbstractJsonMapper {
     @Override
     public <T> T mapToObject(Map fromMap, Class<T> toValueType) {
         String json = JSON.toJSONString(fromMap);
-        return toObject(json, toValueType);
+        return fromJson(json, toValueType);
     }
 }

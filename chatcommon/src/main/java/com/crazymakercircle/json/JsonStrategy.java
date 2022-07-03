@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-public interface JsonMapper {
+public interface JsonStrategy {
     <K, V> Map<K, V> toMap(String json);
 
     <K, V> Map<K, V> toMap(String json, Type type);
@@ -13,11 +13,11 @@ public interface JsonMapper {
 
     <T> List<T> toList(String json, Type type);
 
-    String toJsonString(Object object);
+    String toJson(Object object);
 
-    String toJsonString(Object object, String dateFormatPattern);
+    String toJson(Object object, String dateFormatPattern);
 
-    <T> T toObject(String json, Class<T> valueType);
+    <T> T fromJson(String json, Class<T> valueType);
 
     <K, V> Map<K, V> objectToMap(Object fromValue);
 

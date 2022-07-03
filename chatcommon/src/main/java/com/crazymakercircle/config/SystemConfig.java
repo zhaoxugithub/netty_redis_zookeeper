@@ -81,6 +81,15 @@ public class SystemConfig extends ConfigProperties
 
 
     /**
+     * json的类型: gson/fastjson/Jackson
+     *
+     * json.strategy=fastjson
+     */
+    public static final String JSON_STRATEGY
+            = singleton.getValue("json.strategy");
+
+
+    /**
      * 获取文件服务器的文件路径
      *
      * @return

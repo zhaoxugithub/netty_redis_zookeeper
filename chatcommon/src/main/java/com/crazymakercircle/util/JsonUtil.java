@@ -3,6 +3,7 @@ package com.crazymakercircle.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.crazymakercircle.json.JsonContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -64,19 +65,24 @@ public class JsonUtil
         return null;
     }
 
-    //使用谷歌 Gson 将 POJO 转成字符串
+    //使用策略模式 将 POJO 转成字符串
     public static String pojoToJson(Object obj)
     {
+        //使用谷歌 Gson 将 POJO 转成字符串
         //String json = new Gson().toJson(obj);
-        String json = gson.toJson(obj);
+        //String json = gson.toJson(obj);
 
+        String json =   JsonContext.getStrategy().toJson(obj);
         return json;
     }
 
-    //使用阿里 Fastjson 将字符串转成 POJO对象
+    //使用策略模式 将 字符串 转成POJO
     public static <T> T jsonToPojo(String json, Class<T> tClass)
     {
-        T t = JSONObject.parseObject(json, tClass);
+        //使用阿里 Fastjson 将字符串转成 POJO对象
+//        T t = JSONObject.parseObject(json, tClass);
+
+        T t = JsonContext.getStrategy().fromJson(json, tClass);
         return t;
     }
 

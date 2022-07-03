@@ -11,11 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
-public class JacksonJsonMapper extends AbstractJsonMapper {
+public class JacksonJsonStrategy implements JsonStrategy {
 
     public static ObjectMapper objectMapper;
 
-    public JacksonJsonMapper() {
+    public JacksonJsonStrategy() {
         // 禁止时间格式序列化为时间戳
         if (objectMapper == null) {
             objectMapper = new ObjectMapper()
@@ -75,7 +75,7 @@ public class JacksonJsonMapper extends AbstractJsonMapper {
     }
 
     @Override
-    public String toJsonString(Object object) {
+    public String toJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -84,7 +84,7 @@ public class JacksonJsonMapper extends AbstractJsonMapper {
     }
 
     @Override
-    public String toJsonString(Object object, String dateFormatPattern) {
+    public String toJson(Object object, String dateFormatPattern) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatPattern);
         try {
             return objectMapper.writer(dateFormat).writeValueAsString(object);
@@ -94,7 +94,7 @@ public class JacksonJsonMapper extends AbstractJsonMapper {
     }
 
     @Override
-    public <T> T toObject(String json, Class<T> valueType) {
+    public <T> T fromJson(String json, Class<T> valueType) {
         try {
             return objectMapper.readValue(json, valueType);
         } catch (IOException e) {
