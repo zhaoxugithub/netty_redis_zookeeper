@@ -45,6 +45,7 @@ public class FastJsonStrategy implements JsonStrategy {
         return JSON.parseObject(json, typeReference.getType());
     }
 
+    //序列化
     @Override
     public String toJson(Object object) {
         return JSON.toJSONString(object);
@@ -55,6 +56,7 @@ public class FastJsonStrategy implements JsonStrategy {
         return JSON.toJSONStringWithDateFormat(object, dateFormatPattern, SerializerFeature.WriteDateUseDateFormat);
     }
 
+    //反序列化
     @Override
     public <T> T fromJson(String json, Class<T> valueType) {
         return JSON.parseObject(json, valueType);

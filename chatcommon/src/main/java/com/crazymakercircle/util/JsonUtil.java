@@ -1,6 +1,7 @@
 package com.crazymakercircle.util;
 
 import com.crazymakercircle.json.JsonContext;
+import com.crazymakercircle.json.JsonStrategy;
 
 import java.io.UnsupportedEncodingException;
 
@@ -41,7 +42,10 @@ public class JsonUtil {
         //String json = new Gson().toJson(obj);
         //String json = gson.toJson(obj);
 
-        String json = JsonContext.getStrategy().toJson(obj);
+        // client
+        JsonStrategy strategy = JsonContext.getStrategy();
+
+        String json = strategy.toJson(obj);
         return json;
     }
 
@@ -50,8 +54,9 @@ public class JsonUtil {
     public static <T> T jsonToPojo(String json, Class<T> tClass) {
         //使用阿里 Fastjson 将字符串转成 POJO对象
 //        T t = JSONObject.parseObject(json, tClass);
+        JsonStrategy strategy = JsonContext.getStrategy();
 
-        T t = JsonContext.getStrategy().fromJson(json, tClass);
+        T t = strategy.fromJson(json, tClass);
         return t;
     }
 

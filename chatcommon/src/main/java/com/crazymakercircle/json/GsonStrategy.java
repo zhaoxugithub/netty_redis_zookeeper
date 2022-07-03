@@ -18,8 +18,8 @@ public class GsonStrategy implements JsonStrategy {
         gsonBuilder = new GsonBuilder();
         //不需要html escape
         gsonBuilder.disableHtmlEscaping();
-        gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer()).setDateFormat(DateFormat.LONG);
-        gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializers.DateDeserializer()).setDateFormat(DateFormat.LONG);
+//        gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer()).setDateFormat(DateFormat.LONG);
+//        gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializers.DateDeserializer()).setDateFormat(DateFormat.LONG);
 
         // 解决Gson序列化时出现整型变为浮点型的问题
         gsonBuilder.registerTypeAdapter(new TypeToken<Map<Object, Object>>() { }.getType(),
@@ -85,6 +85,7 @@ public class GsonStrategy implements JsonStrategy {
 
     @Override
     public String toJson(Object object) {
+
         return gson.toJson(object);
     }
 

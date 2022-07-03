@@ -28,6 +28,7 @@ public abstract class JsonContext implements JsonStrategy {
     private static JsonStrategy loadFromConfig() {
 
         String jsonType = SystemConfig.JSON_STRATEGY;
+
         switch (jsonType) {
             case JACKSON:
                 if (isClassPresent(CLASS_TYPE_JACKSON)) {
@@ -60,9 +61,13 @@ public abstract class JsonContext implements JsonStrategy {
     }
 
     public static JsonStrategy getStrategy() {
+
         if (strategy == null) {
+
             synchronized (JsonContext.class) {
+
                 if (strategy == null) {
+
                     strategy = loadFromConfig();
                 }
             }
