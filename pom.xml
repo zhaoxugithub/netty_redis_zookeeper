@@ -23,6 +23,9 @@
     <!-- 依赖版本集中管理 -->
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+
         <logback-classic.version>1.1.11</logback-classic.version>
         <spring-data-redis.version>1.4.3.RELEASE</spring-data-redis.version>
         <springboot.version>1.5.9.RELEASE</springboot.version>
@@ -48,8 +51,24 @@
         <lombok.version>1.16.22</lombok.version>
         <httpclient.version>4.5.1</httpclient.version>
         <commons-io.version>2.6</commons-io.version>
-    </properties>
 
+
+        <!--<springboot>2.0.0.RELEASE</springboot>-->
+        <!--<springboot>1.5.9.RELEASE</springboot>-->
+        <protobuf.version>3.6.1</protobuf.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <jackson.version>2.11.2</jackson.version>
+
+        <guava.version>17.0</guava.version>
+        <httpclientutil.version>1.0</httpclientutil.version>
+        <feign.form.spring.version>3.0.3</feign.form.spring.version>
+        <spring.version>4.3.11.RELEASE</spring.version>
+        <fastjson.version>1.2.29</fastjson.version>
+        <rocketmq.version>4.1.0-incubating</rocketmq.version>
+
+
+    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -61,7 +80,11 @@
     </dependencyManagement>
 
     <dependencies>
-
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

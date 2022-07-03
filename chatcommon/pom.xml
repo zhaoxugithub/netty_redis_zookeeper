@@ -13,26 +13,6 @@
     <artifactId>chatCommon</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-        <springboot>1.4.3.RELEASE</springboot>
-        <!--<springboot>2.0.0.RELEASE</springboot>-->
-        <!--<springboot>1.5.9.RELEASE</springboot>-->
-        <protobuf.version>3.6.1</protobuf.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <jackson.version>2.11.2</jackson.version>
-
-        <guava.version>17.0</guava.version>
-        <httpclientutil.version>1.0</httpclientutil.version>
-        <feign.form.spring.version>3.0.3</feign.form.spring.version>
-        <spring.version>4.3.11.RELEASE</spring.version>
-        <fastjson.version>1.2.29</fastjson.version>
-        <rocketmq.version>4.1.0-incubating</rocketmq.version>
-
-    </properties>
-
 
     <dependencies>
         <dependency>
@@ -73,24 +53,28 @@
             <optional>true</optional>
         </dependency>
 
-
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <version>3.4.8</version>
         </dependency>
 
-       <!-- <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-session</artifactId>
-            <version>${curator.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.zookeeper</groupId>
-                    <artifactId>zookeeper</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
+        <!-- <dependency>
+             <groupId>org.apache.curator</groupId>
+             <artifactId>curator-session</artifactId>
+             <version>${curator.version}</version>
+             <exclusions>
+                 <exclusion>
+                     <groupId>org.apache.zookeeper</groupId>
+                     <artifactId>zookeeper</artifactId>
+                 </exclusion>
+             </exclusions>
+         </dependency>-->
 
         <dependency>
             <groupId>org.apache.curator</groupId>
@@ -128,11 +112,6 @@
             <version>${spring-data-redis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-pojo</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -200,50 +179,49 @@
     </dependencies>
 
 
-
     <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
 
-            <version>3.1</version>
-            <configuration>
-                <encoding>utf-8</encoding>
-                <source>${java.version}</source>
-                <target>${java.version}</target>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.xolstice.maven.plugins</groupId>
-            <artifactId>protobuf-maven-plugin</artifactId>
-            <version>0.5.0</version>
-            <extensions>true</extensions>
-            <configuration>
-                <!--默认值-->
-                <protoSourceRoot>${project.basedir}/proto/protoConfig</protoSourceRoot>
-                <!--默认值-->
-                <!--<outputDirectory>${project.build.directory}/generated-sources/protobuf/java</outputDirectory>-->
-                <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
-                <!--设置是否在生成java文件之前清空outputDirectory的文件，默认值为true，设置为false时也会覆盖同名文件-->
-                <clearOutputDirectory>false</clearOutputDirectory>
-                <!--默认值-->
-                <temporaryProtoFileDirectory>${project.build.directory}/protoc-temp</temporaryProtoFileDirectory>
-                <!--更多配置信息可以查看https://www.xolstice.org/protobuf-maven-plugin/compile-mojo.html-->
+                <version>3.1</version>
+                <configuration>
+                    <encoding>utf-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.5.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!--默认值-->
+                    <protoSourceRoot>${project.basedir}/proto/protoConfig</protoSourceRoot>
+                    <!--默认值-->
+                    <!--<outputDirectory>${project.build.directory}/generated-sources/protobuf/java</outputDirectory>-->
+                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                    <!--设置是否在生成java文件之前清空outputDirectory的文件，默认值为true，设置为false时也会覆盖同名文件-->
+                    <clearOutputDirectory>false</clearOutputDirectory>
+                    <!--默认值-->
+                    <temporaryProtoFileDirectory>${project.build.directory}/protoc-temp</temporaryProtoFileDirectory>
+                    <!--更多配置信息可以查看https://www.xolstice.org/protobuf-maven-plugin/compile-mojo.html-->
 
-                <protocExecutable>${project.basedir}/proto/protobin/protoc3.6.1.exe</protocExecutable>
-            </configuration>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>compile</goal>
-                        <goal>test-compile</goal>
-                    </goals>
+                    <protocExecutable>${project.basedir}/proto/protobin/protoc3.6.1.exe</protocExecutable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
 
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
