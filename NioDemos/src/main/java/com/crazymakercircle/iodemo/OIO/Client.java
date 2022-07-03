@@ -21,6 +21,7 @@ public class Client {
         }
         while (true) {
             System.out.println("请输入要发送的字符串：");
+
             String str = sc.next();
 
             socket.getOutputStream().write(str.getBytes());
