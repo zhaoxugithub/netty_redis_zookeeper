@@ -52,7 +52,7 @@ public class JsonServer {
                     // 向子channel流水线添加3个handler处理器
                     ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4));
                     ch.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
-                    ch.pipeline().addLast(new JsonMsgHandler());
+                    ch.pipeline().addLast(new JsonMsgDecoder());
                 }
             });
             // 6 开始绑定server

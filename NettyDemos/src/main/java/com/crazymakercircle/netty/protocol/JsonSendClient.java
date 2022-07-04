@@ -48,6 +48,7 @@ public class JsonSendClient {
                     // 客户端channel流水线添加2个handler处理器
                     ch.pipeline().addLast(new LengthFieldPrepender(4));
                     ch.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));
+                    ch.pipeline().addLast(new JsonMsgEncoder());
                 }
             });
             ChannelFuture f = b.connect();
@@ -67,8 +68,10 @@ public class JsonSendClient {
             //发送 Json 字符串对象
             for (int i = 0; i < 1000; i++) {
                 JsonMsg user = build(i, i + "->" + content);
-                channel.writeAndFlush(user.convertToJson());
-                Logger.info("发送报文：" + user.convertToJson());
+                channel.writeAndFlush(user);
+
+//                channel.writeAndFlush(user.convertToJson());
+//                Logger.info("发送报文：" + user.convertToJson());
             }
             channel.flush();
 

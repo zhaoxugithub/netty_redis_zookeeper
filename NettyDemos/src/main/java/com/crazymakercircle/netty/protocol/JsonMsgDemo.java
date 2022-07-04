@@ -104,7 +104,7 @@ public class JsonMsgDemo {
                         1024, 0,
                         4, 0, 4));
                 ch.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
-                ch.pipeline().addLast(new JsonMsgHandler());
+                ch.pipeline().addLast(new JsonMsgDecoder());
             }
         };
         EmbeddedChannel channel = new EmbeddedChannel(i);
