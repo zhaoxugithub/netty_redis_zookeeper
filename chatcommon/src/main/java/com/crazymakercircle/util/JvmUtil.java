@@ -2,6 +2,9 @@ package com.crazymakercircle.util;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class JvmUtil
@@ -52,5 +55,14 @@ public class JvmUtil
             // Typically ClassNotFoundException or NoClassDefFoundError...
             return false;
         }
+    }
+
+    public static  Type getType(Object object) {
+
+        //new后面带上大括号，表示重写父类方法，创建了一个匿名子类
+//        Map<String,String> model = new HashMap<String,String>(){};
+//        Type type= model.getClass().getGenericSuperclass();
+
+        return object.getClass().getGenericSuperclass();
     }
 }

@@ -4,6 +4,8 @@ import com.crazymakercircle.json.JsonContext;
 import com.crazymakercircle.json.JsonStrategy;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 public class JsonUtil {
 
@@ -59,6 +61,13 @@ public class JsonUtil {
         T t = strategy.fromJson(json, tClass);
         return t;
     }
+    public static  <K, V> Map<K, V> jsonToMap(String json, Type type) {
+        //使用阿里 Fastjson 将字符串转成 POJO对象
+//        T t = JSONObject.parseObject(json, tClass);
+        JsonStrategy strategy = JsonContext.getStrategy();
 
+        Map<K, V> t = strategy.toMap(json,type);
+        return t;
+    }
 
 }

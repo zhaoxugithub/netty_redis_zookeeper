@@ -14,5 +14,12 @@ message Msg {
   uint32 id = 1;  // Unique ID number for this person.
   string content = 2;
 }
-
+message Msg2 {
+  uint32 id = 1;  // Unique ID number for this person.
+  string content = 2;
+}
+message Msg3 {
+  uint32 id = 1;  // Unique ID number for this person.
+  string content = 2;
+}
 // [结束 消息定义]

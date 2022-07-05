@@ -62,6 +62,7 @@ public class FastJsonStrategy implements JsonStrategy {
         return JSON.parseObject(json, valueType);
     }
 
+
     @Override
     public <K, V> Map<K, V> objectToMap(Object fromValue) {
         String json = JSON.toJSONString(fromValue);

@@ -1,24 +1,25 @@
 package com.crazymakercircle.netty.http.fileserver.segmentdown;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.crazymakercircle.util.HttpClientHelper;
 import com.crazymakercircle.util.JsonUtil;
+import com.crazymakercircle.util.JvmUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import static com.crazymakercircle.util.JsonUtil.JSONOBJECT_TYPE;
 
 /**
  * 分片下载，断点续传
  */
 @Data
 @Slf4j
-public class MultiShardDownloader
-{
+public class MultiShardDownloader {
 
     /**
      * 远程文件url 地址
@@ -36,8 +37,7 @@ public class MultiShardDownloader
     private final int shardCount;
     private final DownLoadTask tasks[];
 
-    public MultiShardDownloader(String downLoadUrl, String savePath, int shardCount)
-    {
+    public MultiShardDownloader(String downLoadUrl, String savePath, int shardCount) {
         this.downLoadUrl = downLoadUrl;
         this.savePath = savePath;
         this.shardCount = shardCount;
@@ -47,15 +47,13 @@ public class MultiShardDownloader
     /**
      * 启动分片下载
      */
-    public void start()
-    {
+    public void start() {
         /**
          * 首先，取得文件长度
          */
         long len = getFileLength(downLoadUrl);
 
-        if (len <= 0)
-        {
+        if (len <= 0) {
             log.error("获取文件长度有误");
             return;
         }
@@ -65,11 +63,9 @@ public class MultiShardDownloader
         long shardSize = len / shardCount;
 
         CountDownLatch waiter = new CountDownLatch(shardCount);
-        for (int i = 0; i < shardCount; i++)
-        {
+        for (int i = 0; i < shardCount; i++) {
             long startPosition = i * shardSize;
-            if (i == shardCount - 1)
-            {
+            if (i == shardCount - 1) {
                 shardSize = len - shardSize * (shardCount - 1);
             }
             /**
@@ -80,22 +76,19 @@ public class MultiShardDownloader
             /**
              * 监听任务的完成事件
              */
-            task.getCompletableFuture()
-                    .whenComplete((finished, throwable) ->
-                    {
-                        waiter.countDown();
-                    });
+            task.getCompletableFuture().whenComplete((finished, throwable) ->
+            {
+                waiter.countDown();
+            });
             tasks[i] = task;
 
             task.start();
         }
 
-        try
-        {
+        try {
             //等待所有的分片下载完成
             waiter.await();
-        } catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -108,25 +101,26 @@ public class MultiShardDownloader
      * @return 长度
      */
 
-    public static long getFileLength(String downloadUrl)
-    {
+    public static long getFileLength(String downloadUrl) {
         long len = 0;
-        try
-        {
+        try {
 
             String content = HttpClientHelper.simpleGet(downloadUrl);
-            if (StringUtils.isNotBlank(content))
-            {  /**
-             * 解析 REST 接口的响应结果，解析成 JSON 对象，并且返回
-             */
-                JSONObject result = JsonUtil.jsonToPojo(content, JSONOBJECT_TYPE);
-                if (null != result.get("fileLength"))
-                {
+            if (StringUtils.isNotBlank(content)) {
+
+                /**
+                 * 解析 REST 接口的响应结果，解析成 JSON 对象，并且返回
+                 */
+
+
+                Type type = JvmUtil.getType(new HashMap<String, String>() {
+                });
+                Map<String, String> result = JsonUtil.jsonToMap(content, type);
+                if (null != result.get("fileLength")) {
                     len = Long.valueOf(result.get("fileLength").toString());
                 }
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return len;

@@ -48,10 +48,12 @@ public class ProtobufDemo
         MsgProtos.Msg message = buildMsg(1,"疯狂创客圈-高并发发烧友圈子");
         //将Protobuf对象，序列化成二进制字节数组
         byte[] data = message.toByteArray();
+
         //可以用于网络传输,保存到内存或外存
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(data);
         data = outputStream.toByteArray();
+
         //二进制字节数组,反序列化成Protobuf 对象
         MsgProtos.Msg inMsg = MsgProtos.Msg.parseFrom(data);
         Logger.info("devId:=" + inMsg.getId());

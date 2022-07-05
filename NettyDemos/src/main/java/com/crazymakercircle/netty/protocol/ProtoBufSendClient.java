@@ -67,8 +67,8 @@ public class ProtoBufSendClient {
 
             //发送 Protobuf 对象
             for (int i = 0; i < 1000; i++) {
-                MsgProtos.Msg user = build(i, i + "->" + content);
-                channel.writeAndFlush(user);
+                MsgProtos.Msg msg = build(i, i + "->" + content);
+                channel.writeAndFlush(msg);
                 Logger.info("发送报文数：" + i);
             }
             channel.flush();
@@ -91,10 +91,13 @@ public class ProtoBufSendClient {
 
     //构建ProtoBuf对象
     public MsgProtos.Msg build(int id, String content) {
+
         MsgProtos.Msg.Builder builder = MsgProtos.Msg.newBuilder();
+
         builder.setId(id);
         builder.setContent(content);
-        return builder.build();
+
+       return builder.build();
     }
 
     public static void main(String[] args) throws InterruptedException {
