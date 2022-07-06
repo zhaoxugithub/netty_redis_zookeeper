@@ -44,6 +44,7 @@ public class HttpEchoHandler extends SimpleChannelInboundHandler<FullHttpRequest
          * 缓存HTTP协议的版本号
          */
         HttpProtocolHelper.cacheHttpProtocol(ctx, request);
+
         Map<String, Object> echo = new HashMap<String, Object>();
         // 1.获取URI
         String uri = request.uri();

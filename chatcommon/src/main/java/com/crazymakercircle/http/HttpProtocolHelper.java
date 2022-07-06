@@ -238,8 +238,9 @@ public class HttpProtocolHelper
             // 如果是1.0版本的长连接，设置 connection:keep-alive 头部
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
+
         //发送内容
-        ChannelFuture writePromise = ctx.writeAndFlush(response);
+        ChannelFuture writePromise = ctx.channel().writeAndFlush(response);
 
         if (!keepAlive)
         {

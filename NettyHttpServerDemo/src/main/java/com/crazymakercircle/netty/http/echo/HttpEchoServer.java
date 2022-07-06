@@ -12,8 +12,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -27,6 +25,7 @@ public final class HttpEchoServer
     // 具备办法，通过增加路由表项完成，其命令为route add，下面是一个例子
     //
     // route add 192.168.20.101 mask 255.255.255.255 192.168.20.1
+    // route add 192.168.0.7 mask 255.255.255.255 192.168.0.1
     //
     // 以上命令表示：目标为192.168.20.101报文，其发送的下一跳为192.168.20.1网关
     // 该路由项在使用完毕后，建议删除，其删除指令如下：
@@ -34,8 +33,9 @@ public final class HttpEchoServer
     // 如果没有删除，则所有本机报文都经过网卡绕一圈回来，会很耗性能
     // 不过该路由表项并没有保存，在电脑重启后失效
     // 提示：以上的本地IP和网关IP，需要结合自己的电脑网卡和网关去更改
+    // wireshark 报文过滤的条件  tcp.port == 18899
 
-    static class HttpZeroCopyInitializer extends ChannelInitializer<SocketChannel>
+    static class ChildInitializer extends ChannelInitializer<SocketChannel>
     {
 
 
@@ -84,8 +84,8 @@ public final class HttpEchoServer
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.DEBUG))
-                    .childHandler(new HttpZeroCopyInitializer());
+//                    .handler(new LoggingHandler(LogLevel.DEBUG))
+                    .childHandler(new ChildInitializer());
 
             // 监听端口，返回监听通道
             Channel ch = b.bind(SystemConfig.SOCKET_SERVER_PORT).sync().channel();
