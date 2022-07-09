@@ -3,14 +3,12 @@ package com.crazymakercircle.netty.basic;
 import com.crazymakercircle.im.common.bean.User;
 import com.crazymakercircle.util.Logger;
 import com.crazymakercircle.util.ThreadUtil;
+import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.EventExecutorChooserFactory;
 import org.junit.Test;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -146,7 +144,7 @@ public class NettyReactorTest {
 
 
     @Test
-    public void testThreadPool() {
+    public void testThreadPoolTaskSchedule() {
 
         IntegerWrapper[] integerWrappers = new IntegerWrapper[100];
 
@@ -206,7 +204,7 @@ public class NettyReactorTest {
             return i;
         }
 
-        public void regester(EventExecutor eventloop) {
+        public void register(EventExecutor eventloop) {
             this.eventloop=eventloop;
 
         }
@@ -256,21 +254,27 @@ public class NettyReactorTest {
         long startTime = System.currentTimeMillis();
 
         //创建netty  线程池
-        DefaultEventExecutorGroup pool = new DefaultEventExecutorGroup(16);
+        DefaultEventLoopGroup pool = new DefaultEventLoopGroup(16);
 //        ThreadPoolExecutor pool = ThreadUtil.getCpuIntenseTargetThreadPool();
 
         for (int i = 0; i < 100; i++) {
             integerWrappers[i] = new IntegerWrapperNoneLock();
+
             EventExecutor eventloop = pool.next();
-            integerWrappers[i].regester(eventloop);
+
+            integerWrappers[i].register(eventloop);
 
         }
 
 
         for (int j = 0; j < countPerInt; j++) {
+
             for (int i = 0; i < 100; i++) {
+
                 IntegerWrapperNoneLock integerWrapper = integerWrappers[i];
+
                 EventExecutor eventloop = integerWrapper.eventloop;
+
                 eventloop.submit(new TaskNoneLock(integerWrapper, latch));
 
             }
