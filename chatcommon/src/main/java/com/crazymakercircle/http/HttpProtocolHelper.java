@@ -20,9 +20,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static io.netty.handler.codec.http.HttpHeaders.Values.CLOSE;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_0;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static io.netty.handler.codec.rtsp.RtspHeaders.Values.KEEP_ALIVE;
+import static org.apache.http.HttpHeaders.*;
 
 public class HttpProtocolHelper
 {
@@ -143,7 +146,7 @@ public class HttpProtocolHelper
         buffer.writeCharSequence(buf.toString(), CharsetUtil.UTF_8);
 
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, buffer);
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
 
         sendAndCleanupConnection(ctx, response);
     }
@@ -151,7 +154,7 @@ public class HttpProtocolHelper
     public static void sendRedirect(ChannelHandlerContext ctx, final FullHttpRequest request, String newUri)
     {
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, FOUND, Unpooled.EMPTY_BUFFER);
-        response.headers().set(HttpHeaderNames.LOCATION, newUri);
+        response.headers().set(LOCATION, newUri);
 
         sendAndCleanupConnection(ctx, response);
     }
@@ -161,7 +164,7 @@ public class HttpProtocolHelper
         HttpVersion version = getHttpVersion(ctx);
         FullHttpResponse response = new DefaultFullHttpResponse(
                 version, status, Unpooled.copiedBuffer("Failure: " + status + "\r\n", CharsetUtil.UTF_8));
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
 
         sendAndCleanupConnection(ctx, response);
     }
@@ -177,7 +180,7 @@ public class HttpProtocolHelper
         HttpVersion version = getHttpVersion(ctx);
         FullHttpResponse response = new DefaultFullHttpResponse(
                 version, OK, Unpooled.copiedBuffer(content, CharsetUtil.UTF_8));
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
 
         sendAndCleanupConnection(ctx, response);
     }
@@ -193,7 +196,7 @@ public class HttpProtocolHelper
         HttpVersion version = getHttpVersion(ctx);
         FullHttpResponse response = new DefaultFullHttpResponse(
                 version, OK, Unpooled.copiedBuffer(content, CharsetUtil.UTF_8));
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
 
         sendAndCleanupConnection(ctx, response);
     }
@@ -215,7 +218,7 @@ public class HttpProtocolHelper
         /**
          * 设置响应头
          */
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "application/json; charset=UTF-8");
         /**
          * 发送响应内容
          */
@@ -232,11 +235,11 @@ public class HttpProtocolHelper
         if (!keepAlive)
         {
             // 如果不是长连接，设置 connection:close 头部
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+            response.headers().set(CONNECTION, CLOSE);
         } else if (isHTTP_1_0(ctx))
         {
             // 如果是1.0版本的长连接，设置 connection:keep-alive 头部
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            response.headers().set(CONNECTION, KEEP_ALIVE);
         }
 
         //发送内容
@@ -304,7 +307,7 @@ public class HttpProtocolHelper
         dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
 
         Calendar time = new GregorianCalendar();
-        response.headers().set(HttpHeaderNames.DATE, dateFormatter.format(time.getTime()));
+        response.headers().set(DATE, dateFormatter.format(time.getTime()));
     }
 
     /**
@@ -320,16 +323,16 @@ public class HttpProtocolHelper
 
         // Date header
         Calendar time = new GregorianCalendar();
-        response.headers().set(HttpHeaderNames.DATE, dateFormatter.format(time.getTime()));
+        response.headers().set(DATE, dateFormatter.format(time.getTime()));
 
         //设置缓存过期时间
         time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
-        response.headers().set(HttpHeaderNames.EXPIRES, dateFormatter.format(time.getTime()));
-        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-platform=" + HTTP_CACHE_SECONDS);
+        response.headers().set(EXPIRES, dateFormatter.format(time.getTime()));
+        response.headers().set(CACHE_CONTROL, "private, max-platform=" + HTTP_CACHE_SECONDS);
 
         //最近修改时间
         String lastModified = dateFormatter.format(new Date(fileToCache.lastModified()));
-        response.headers().set(HttpHeaderNames.LAST_MODIFIED, lastModified);
+        response.headers().set(LAST_MODIFIED, lastModified);
     }
 
     /**
@@ -341,7 +344,7 @@ public class HttpProtocolHelper
     public static void setContentTypeHeader(HttpResponse response, File file)
     {
         MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE,
+        response.headers().set(CONTENT_TYPE,
                 mimeTypesMap.getContentType(file.getPath()));
     }
 
@@ -352,10 +355,11 @@ public class HttpProtocolHelper
 
         if (!keepAlive)
         {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+            response.headers().set(CONNECTION, CLOSE);
+
         } else if (isHTTP_1_0(ctx))
         {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            response.headers().set(CONNECTION, KEEP_ALIVE);
         }
 
     }

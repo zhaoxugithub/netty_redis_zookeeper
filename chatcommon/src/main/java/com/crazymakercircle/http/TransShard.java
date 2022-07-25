@@ -5,7 +5,6 @@ import com.crazymakercircle.util.JsonUtil;
 import com.google.gson.JsonObject;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.Data;
@@ -16,6 +15,9 @@ import java.util.regex.Pattern;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.PARTIAL_CONTENT;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
+import static org.apache.http.HttpHeaders.CONTENT_RANGE;
+import static org.apache.http.HttpHeaders.RANGE;
 
 /**
  * 传输分片 POJO 类
@@ -58,7 +60,7 @@ public class TransShard
      */
     public DefaultHttpResponse compute(ChannelHandlerContext ctx, final HttpRequest request)
     {
-        String range = request.headers().get(HttpHeaderNames.RANGE);
+        String range = request.headers().get(RANGE);
         //如果请求不带 range 头部，则返回文件的长度
         if (null == range)
         {
@@ -116,13 +118,13 @@ public class TransShard
         /**
          * 设置响应的 content-range  内容区间头部
          */
-        response.headers().set(HttpHeaderNames.CONTENT_RANGE,
+        response.headers().set(CONTENT_RANGE,
                 "bytes " + start + "-" + end + "/" + fileLength);
         /**
          * 设置响应的 content-length 头部
          */
         long contentLength = end - start + 1;
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, contentLength + "");
+        response.headers().set(CONTENT_LENGTH, contentLength + "");
 
         return response;
 

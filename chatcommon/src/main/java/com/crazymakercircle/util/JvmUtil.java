@@ -1,10 +1,10 @@
 package com.crazymakercircle.util;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+        import java.lang.management.ManagementFactory;
+        import java.lang.management.RuntimeMXBean;
+        import java.lang.reflect.Type;
+        import java.util.HashMap;
+        import java.util.Map;
 
 
 public class JvmUtil
@@ -12,7 +12,7 @@ public class JvmUtil
 
     public static final long getMxMemory()
     {
-      return   Runtime.getRuntime().maxMemory();
+        return   Runtime.getRuntime().maxMemory();
     }
 
     /**
@@ -65,4 +65,24 @@ public class JvmUtil
 
         return object.getClass().getGenericSuperclass();
     }
+
+    public static final String OS_NAME = System.getProperty("os.name");
+    private static boolean isLinuxPlatform = false;
+    private static boolean isWindowsPlatform = false;
+    static {
+        if (OS_NAME != null && OS_NAME.toLowerCase().contains("linux")) {
+            isLinuxPlatform = true;
+        }
+
+        if (OS_NAME != null && OS_NAME.toLowerCase().contains("windows")) {
+            isWindowsPlatform = true;
+        }
+
+    }
+    public static boolean isLinuxPlatform() {
+        return false;
+    }
+
+
+
 }

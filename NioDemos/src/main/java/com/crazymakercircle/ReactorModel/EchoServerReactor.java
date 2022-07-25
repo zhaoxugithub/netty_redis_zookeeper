@@ -20,27 +20,41 @@ class EchoServerReactor implements Runnable {
     EchoServerReactor() throws IOException {
         //Reactor初始化
         selector = Selector.open();
+
         serverSocket = ServerSocketChannel.open();
 
         InetSocketAddress address =
                 new InetSocketAddress(NioDemoConfig.SOCKET_SERVER_IP,
                         NioDemoConfig.SOCKET_SERVER_PORT);
-        serverSocket.socket().bind(address);
-        Logger.info("服务端已经开始监听："+address);
+
         //非阻塞
         serverSocket.configureBlocking(false);
 
+
         //分步处理,第一步,接收accept事件
         SelectionKey sk =
-                serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+                serverSocket.register(selector,0,new AcceptorHandler());
+
+        // SelectionKey.OP_ACCEPT
+        serverSocket.socket().bind(address);
+        Logger.info("服务端已经开始监听："+address);
+
+
+        sk.interestOps(SelectionKey.OP_ACCEPT);
+
         //attach callback object, AcceptorHandler
-        sk.attach(new AcceptorHandler());
+        //sk.attach(new AcceptorHandler());
     }
 
     public void run() {
         try {
             while (!Thread.interrupted()) {
+
+                //io事件的查询
+                // 限时阻塞查询
                 selector.select(1000);
+
+
                 Set<SelectionKey> selected = selector.selectedKeys();
                 if (null == selected || selected.size() == 0) {
                     continue;
@@ -49,9 +63,12 @@ class EchoServerReactor implements Runnable {
                 while (it.hasNext()) {
                     //Reactor负责dispatch收到的事件
                     SelectionKey sk = it.next();
+
+                    it.remove();     //避免下次重复处理
+
                     dispatch(sk);
                 }
-                selected.clear();
+//                selected.clear();
             }
         } catch (IOException ex) {
             ex.printStackTrace();
