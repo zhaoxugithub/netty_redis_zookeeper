@@ -1,6 +1,7 @@
-package com.crazymakercircle.bufferDemo;
+package com.crazymakercircle.cache;
 
 import com.crazymakercircle.util.Logger;
+import com.crazymakercircle.util.ThreadUtil;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -38,9 +39,11 @@ public class LruDemo {
         Logger.cfo(cache.get(1));        // 返回 -1 (未找到)
         Logger.cfo(cache.get(3));        // 返回  3
         Logger.cfo(cache.get(4));        // 返回  4
+
+        ThreadUtil.sleepSeconds(10);
     }
 
-    
+
 
     static class SimpleLRUCache extends LinkedHashMap<Integer, Integer> {
         private int capacity;
@@ -113,7 +116,7 @@ public class LruDemo {
                 return -1;
             }
             // node != null,返回node后需要把访问的node移动到双向链表头部
-            moveToHead(node);
+            moveToBack(node);
             return node.value;
         }
 
@@ -123,36 +126,36 @@ public class LruDemo {
                 //缓存不存在就新建一个节点，放入Map以及双向链表的头部
                 Entry newNode = new Entry(key, value);
                 cacheMap.put(key, newNode);
-                addToHead(newNode);
+                addToBack(newNode);
                 size++;
-                //如果超出缓存容器大小，就移除队尾元素
+                //如果超出缓存容器大小，就移除队首元素
                 if (size > capacity) {
-                    Entry removeNode = removeTail();
+                    Entry removeNode = removeFirst();
                     cacheMap.remove(removeNode.key);
                     size--;
                 }
             } else {
                 //如果已经存在，就把node移动到头部。
                 node.value = value;
-                moveToHead(node);
+                moveToBack(node);
             }
         }
 
         /**
-         * 移动节点到头部：
+         * 移动节点到尾部：
          * 1、删除节点
-         * 2、把节点添加到头部
+         * 2、把节点添加到尾部
          */
-        private void moveToHead(Entry node) {
+        private void moveToBack(Entry node) {
             removeNode(node);
-            addToHead(node);
+            addToBack(node);
         }
 
         /**
-         * 移除队尾元素
+         * 移除队首元素
          */
-        private Entry removeTail() {
-            Entry node = tail.before;
+        private Entry removeFirst() {
+            Entry node = head.after;
             removeNode(node);
             return node;
         }
@@ -164,13 +167,13 @@ public class LruDemo {
         }
 
         /**
-         * 把节点添加到头部
+         * 把节点添加到尾部
          */
-        private void addToHead(Entry node) {
-            head.after.before = node;
-            node.after = head.after;
-            head.after = node;
-            node.before = head;
+        private void addToBack(Entry node) {
+            tail.before.after = node;
+            node.before = tail.before;
+            tail.before = node;
+            node.after=tail;
         }
     }
 }
