@@ -9,7 +9,7 @@ import java.util.concurrent.*;
  * Created by 尼恩 at 疯狂创客圈
  */
 
-public class CounDownDemo {
+public class CountDownDemo {
 
     public static final int SLEEP_GAP = 500;
 
