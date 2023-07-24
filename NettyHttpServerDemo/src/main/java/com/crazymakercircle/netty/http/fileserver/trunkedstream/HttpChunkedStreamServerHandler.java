@@ -19,31 +19,27 @@ import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 @Slf4j
-public class HttpChunkedStreamServerHandler extends SimpleChannelInboundHandler<FullHttpRequest>
-{
+public class HttpChunkedStreamServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final CompletableFuture<Boolean> transferFuture = new CompletableFuture<>();
 
     private FullHttpRequest request;
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception
-    {
+    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
         this.request = request;
 
         HttpProtocolHelper.cacheHttpProtocol(ctx, request);
-        //如果是不知道长度的输出流，则不能设置Wie长连接
+        // 如果是不知道长度的输出流，则不能设置Wie长连接
         HttpProtocolHelper.setKeepAlive(ctx, false);
 
 
-        if (!request.decoderResult().isSuccess())
-        {
+        if (!request.decoderResult().isSuccess()) {
             HttpProtocolHelper.sendError(ctx, BAD_REQUEST);
             return;
         }
 
-        if (!GET.equals(request.method()))
-        {
+        if (!GET.equals(request.method())) {
             HttpProtocolHelper.sendError(ctx, METHOD_NOT_ALLOWED);
             return;
         }
@@ -55,13 +51,13 @@ public class HttpChunkedStreamServerHandler extends SimpleChannelInboundHandler<
          * 文件名称
          */
         String fname = file.getName();
-        //随机访问文件实例
+        // 随机访问文件实例
         RandomAccessFile raf = HttpProtocolHelper.openFile(ctx, file);
 
-        //文件长度
+        // 文件长度
         long fileLength = raf.length();
 
-        //设置响应行和响应头
+        // 设置响应行和响应头
         HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
         HttpProtocolHelper.setContentTypeHeader(response, file);
         HttpUtil.setContentLength(response, fileLength);
@@ -70,41 +66,34 @@ public class HttpChunkedStreamServerHandler extends SimpleChannelInboundHandler<
         response.headers().set(HttpHeaderNames.TRANSFER_ENCODING, HttpHeaderValues.CHUNKED);
 
 
-        //发送响应行和响应头
+        // 发送响应行和响应头
         ctx.write(response);
 
-        //管道消息传输承诺
+        // 管道消息传输承诺
         ChannelProgressivePromise progressivePromise = ctx.newProgressivePromise();
 
-        //并注册一个ChannelProgressiveFutureListener 进度监听器
-        progressivePromise.addListener(new ChannelProgressiveFutureListener()
-        {
+        // 并注册一个ChannelProgressiveFutureListener 进度监听器
+        progressivePromise.addListener(new ChannelProgressiveFutureListener() {
             @Override
-            public void operationProgressed(ChannelProgressiveFuture future, long progress, long total)
-            {
-                if (total < 0)
-                {
-                    //长度未知
+            public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
+                if (total < 0) {
+                    // 长度未知
                     log.info("文件：{}，进度：{}", fname, progress);
-                } else
-                {
+                } else {
                     log.info("文件：{}，进度：{}", fname, progress + " / " + total);
                 }
             }
 
             @Override
-            public void operationComplete(ChannelProgressiveFuture future)
-            {
+            public void operationComplete(ChannelProgressiveFuture future) {
 
-                if (!future.isSuccess())
-                {
+                if (!future.isSuccess()) {
                     Throwable cause = future.cause();// 处理失败
                     // Do something
                     cause.printStackTrace();
                     log.info("文件传输失败：{}", fname);
                     transferFuture.completeExceptionally(cause);
-                } else
-                {
+                } else {
                     transferFuture.complete(true);
                 }
                 closeQuietly(raf);
@@ -114,21 +103,16 @@ public class HttpChunkedStreamServerHandler extends SimpleChannelInboundHandler<
         });
         transferFuture.whenComplete((finished, cause) ->
         {
-            if (finished)
-            {
+            if (finished) {
                 log.info("文件传输完成：{}", fname);
                 ChannelFuture lastContentFuture =
                         ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-
-                //不是长连接，关闭
+                // 不是长连接，关闭
                 lastContentFuture.addListener(ChannelFutureListener.CLOSE);
-            } else
-            {
+            } else {
                 log.info("关闭连接通道：{}", ctx.channel());
                 ctx.channel().close();
-
             }
-
         });
         // 发送内容
         ChunkedInput<ByteBuf> chunkedFile = new ChunkedFile(raf, 0, fileLength, 8192);
@@ -137,13 +121,10 @@ public class HttpChunkedStreamServerHandler extends SimpleChannelInboundHandler<
 
     }
 
-
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
-        if (ctx.channel().isActive())
-        {
+        if (ctx.channel().isActive()) {
             HttpProtocolHelper.sendError(ctx, INTERNAL_SERVER_ERROR);
         }
     }

@@ -57,7 +57,4 @@ public class InHandlerDemo extends ChannelInboundHandlerAdapter {
         Logger.info("被调用：channelReadComplete()");
         super.channelReadComplete(ctx);
     }
-
-
-
 }

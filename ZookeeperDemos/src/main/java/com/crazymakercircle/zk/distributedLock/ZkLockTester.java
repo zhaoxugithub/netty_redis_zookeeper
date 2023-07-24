@@ -19,12 +19,12 @@ public class ZkLockTester {
     public void testLock() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
             FutureTaskScheduler.add(() -> {
-                //创建锁
+                // 创建锁
                 ZkLock lock = new ZkLock();
                 lock.lock();
-//每条线程，执行10次累加
+// 每条线程，执行10次累加
                 for (int j = 0; j < 10; j++) {
-//公共的资源变量累加
+// 公共的资源变量累加
                     count++;
                 }
                 try {
@@ -33,7 +33,7 @@ public class ZkLockTester {
                     e.printStackTrace();
                 }
                 log.info("count = " + count);
-                //释放锁
+                // 释放锁
                 lock.unlock();
 
             });
@@ -52,13 +52,11 @@ public class ZkLockTester {
         ;
         for (int i = 0; i < 10; i++) {
             FutureTaskScheduler.add(() -> {
-
                 try {
-                    //获取互斥锁
+                    // 获取互斥锁
                     zkMutex.acquire();
-
                     for (int j = 0; j < 10; j++) {
-//公共的资源变量累加
+// 公共的资源变量累加
                         count++;
                     }
                     try {
@@ -67,7 +65,7 @@ public class ZkLockTester {
                         e.printStackTrace();
                     }
                     log.info("count = " + count);
-                    //释放互斥锁
+                    // 释放互斥锁
                     zkMutex.release();
 
                 } catch (Exception e) {

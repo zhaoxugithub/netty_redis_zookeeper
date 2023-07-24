@@ -100,37 +100,25 @@ public class CountDownDemo {
                 Logger.tcfo("烧水失败，没有茶喝了");
             }
         });
-
-
         ListenableFuture<Boolean> wFuture = gPool.submit(wJob);
-
         Futures.addCallback(wFuture, new FutureCallback<Boolean>() {
             public void onSuccess(Boolean r) {
                 if (!r) {
                     Logger.tcfo("杯子洗不了，没有茶喝了");
                 } else {
-
                     countDownLatch.countDown();
-
                 }
             }
-
             public void onFailure(Throwable t) {
                 Logger.tcfo("杯子洗不了，没有茶喝了");
             }
         });
-
         try {
             synchronized (countDownLatch) {
                 countDownLatch.await(5000, TimeUnit.MICROSECONDS);
-
             }
             Thread.currentThread().setName("主线程");
-
-
             Logger.tcfo("泡茶喝");
-
-
         } catch (InterruptedException e) {
             Logger.tcfo(getCurThreadName() + "发生异常被中断.");
         }

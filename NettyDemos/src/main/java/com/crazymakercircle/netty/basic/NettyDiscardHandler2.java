@@ -9,7 +9,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * create by 尼恩 @ 疯狂创客圈
  **/
 public class NettyDiscardHandler2 extends SimpleChannelInboundHandler {
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         Logger.info("收到消息,丢弃如下:");
